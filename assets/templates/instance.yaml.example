@@ -1,0 +1,11 @@
+# 实例级配置（由 instance.py 从模板生成）
+# mode: demo 使用虚构数据；live 使用真实数据。切换 live 前必须清空演示持仓。
+mode: {{MODE}}
+project_name: {{PROJECT_NAME}}
+root: {{ROOT}}
+primary_source: {{PRIMARY_SOURCE}}
+calibration_source: {{CALIBRATION_SOURCE}}
+notify_channel: {{NOTIFY_CHANNEL}}
+notify_target: {{NOTIFY_TARGET}}
+created_at: {{CREATED_AT}}
+demo_disclaimer: 本实例所有数字均为虚构演示值，与任何真实证券、账户或行情无关

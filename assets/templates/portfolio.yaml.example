@@ -1,0 +1,32 @@
+# 人工维护，含敏感信息：不发布公网、不写进日志、不复制到 tmp
+# 所有金额均为占位符，实例化时由用户填写或由 demo 数据生成器填入虚构值
+as_of: {{AS_OF}}
+display_currency: {{DISPLAY_CURRENCY}}
+
+account:
+  total_assets: {{TOTAL_ASSETS}}
+  available: {{AVAILABLE}}
+  position_ratio: {{POSITION_RATIO}}
+  note: 账户数值只在这里维护；净值与集中度计算均读取本文件
+
+fx:
+  pair: {{FX_PAIR}}
+  rate: {{FX_RATE}}
+  source: {{FX_SOURCE}}
+  as_of: {{AS_OF}}
+  note: 展示口径统一使用此处汇率，并在看板标注来源与时点
+
+holdings:
+{{HOLDINGS_BLOCK}}
+
+concentration_limit:
+  denominator: {{DENOMINATOR}}
+  denominator_note: 分母固定，不因股价下跌或入金自动放开加仓空间
+  max_ratio: {{CONCENTRATION_LIMIT}}
+  max_add_shares: {{MAX_ADD_SHARES}}
+  passive_breach_rule: 股价上涨导致占比自然越线时只标红并停止提示补仓，不提示减仓
+  anti_martingale_rule: 分母固定，不因浮亏自动放开补仓空间
+
+add_capital:
+  limit: {{ADD_CAPITAL_LIMIT}}
+  note: 额度天花板；实际可补受 concentration_limit 约束

@@ -1,0 +1,51 @@
+{
+  "source": "demo-fixture",
+  "as_of": "2026-01-05",
+  "currency": "MIXED",
+  "coverage": {
+    "sh601398": "covered",
+    "sh601857": "covered",
+    "sh600519": "covered",
+    "hk00005": "covered",
+    "hk00388": "not_covered",
+    "hk01299": "not_covered"
+  },
+  "ttm_calibration": {
+    "sh601398": {
+      "ttm_payout": 0.32,
+      "implied_yield": 5.16,
+      "note": "demo: TTM 含中期分红；年度方案口径约 4.8%"
+    }
+  },
+  "corporate_action_policy": "检测到新 ex_date 必须重算该股买入区间；不得虚构未来除权日",
+  "plans": [
+    {
+      "code": "sh601398",
+      "ex_date": "2025-06-10",
+      "per_share": 0.19,
+      "report_period": "2024-FY",
+      "progress": "implemented"
+    },
+    {
+      "code": "sh601857",
+      "ex_date": "2025-06-11",
+      "per_share": 0.29,
+      "report_period": "2024-FY",
+      "progress": "implemented"
+    },
+    {
+      "code": "sh600519",
+      "ex_date": "2025-06-12",
+      "per_share": 45.0,
+      "report_period": "2024-FY",
+      "progress": "implemented"
+    },
+    {
+      "code": "hk00005",
+      "ex_date": "2025-06-13",
+      "per_share": 2.35,
+      "report_period": "2024-FY",
+      "progress": "implemented"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# 买入区间基准库：离线研究产物，价格引擎只读
+# 每个标的必须带安全边际、触发确认条件、失效条件三件套
+as_of: {{AS_OF}}
+method: 估值锚 × 安全边际折算价格带，再用 52 周高低收窄；同卡标注估值偏贵程度
+formula: d = max(0, (anchor_percentile - 50) / 100) * safety_factor + base_margin
+safety_factor: {{SAFETY_FACTOR}}
+base_margin: {{BASE_MARGIN}}
+degradation:
+  policy: "估值分位缺失时标 confidence=reference，禁止用价格分位冒充估值分位"
+  recovery: 数据源恢复后补取真实分位，升回 standard 并重算区间
+  notify_note: 参考级 / 低置信度，需人工确认
+bands:
+{{BANDS_BLOCK}}

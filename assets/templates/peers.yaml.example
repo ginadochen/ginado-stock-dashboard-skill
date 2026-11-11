@@ -1,0 +1,8 @@
+# 同业清单：只在同行业内横比
+# role: peer_only —— 不进主清单、不参与价格告警、不给买入区间
+as_of: {{AS_OF}}
+comparison_rule: 跨市场只比毛利率、增速、ROE、PE/PB 等比率，不比绝对金额
+period_rule: 按自然年季度对齐；A 股 Q3 与港股 H1 的周期差必须标注
+currency_rule: 各标的财报币种独立存于 earnings.json，页面分别标注
+groups:
+{{PEERS_BLOCK}}

@@ -1,0 +1,17 @@
+{
+  "source": "demo-fixture",
+  "as_of": "2026-01-05",
+  "currency": "CNY",
+  "date": "2026-01-05",
+  "total_assets_cny": 500000,
+  "cash_cny": 282400,
+  "position_value_cny": 217600,
+  "day_pnl_cny": 2550.0,
+  "benchmarks": {
+    "sh000300": 4000.0,
+    "hkHSI": 20000.0
+  },
+  "method_note": "demo: 简单收益口径，非 TWR/MWR",
+  "first_written_at": "2026-01-05",
+  "updated_at": "2026-01-05"
+}

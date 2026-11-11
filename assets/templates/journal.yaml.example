@@ -1,0 +1,23 @@
+# 交易日记：防止事后无法回溯「为什么买」
+# 由人工或明确授权的会话先读后写；自动化不擅自写入
+as_of: {{AS_OF}}
+review_trigger: 浮亏超过阈值时给「重新评估」入口，而不是加仓按钮
+review_threshold_pct: {{REVIEW_THRESHOLD}}
+entries: []
+review_checklist:
+  - 当初的买入理由现在还成立吗
+  - 失效条件是否已经触发
+  - 这期财报是否改变了核心逻辑
+  - 当时的估值分位与置信度是多少
+  - 加仓后单一标的占比是多少
+  - 如果只是想摊薄账面成本，是否属于越跌越补
+template: |
+  - date: YYYY-MM-DD
+    code: <主代码>
+    action: buy | add | hold | reduce
+    price: <价格>
+    shares: <股数>
+    reason: <买入理由，必填>
+    invalidation: <失效条件，必填>
+    anchor_percentile: <当时估值分位或 null>
+    confidence: standard | reference

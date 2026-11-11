@@ -1,0 +1,9 @@
+# 标的清单：双源代码映射的唯一维护点
+# role: watch 观察 | holding 持仓 | observe_only 仅观察（不给买入区间、不推价格提醒）
+# 文件名统一用主代码；跨市场代码格式差异只在这里维护
+as_of: {{AS_OF}}
+primary_source: {{PRIMARY_SOURCE}}
+calibration_source: {{CALIBRATION_SOURCE}}
+conflict_policy: keep_both_and_flag
+reporting_currency_note: 财报记账本位币、股价交易币种、账户展示币种三者分离；跨市场只比比率与增速
+{{CODES_BLOCK}}

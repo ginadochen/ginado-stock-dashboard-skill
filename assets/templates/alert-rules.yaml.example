@@ -1,0 +1,26 @@
+# 阈值、时段与降噪规则
+as_of: {{AS_OF}}
+trigger_mode: single-hour-rules
+schedule_note: 只在开盘时段跑；多条单整点规则，禁用 HOURLY 全天轮询
+check_hours: {{CHECK_HOURS}}
+report_check: {{REPORT_CHECK}}
+holiday_rule: 任务内用交易日历判断，非交易日静默退出，不取数不推送
+market_calendars:
+  a_share: {{A_CALENDAR}}
+  hk: {{HK_CALENDAR}}
+  note: A/H 休市日与午休时段不同，必须分别判断
+dedupe:
+  state_file: state/dedupe.json
+  rule: 同一档位只推一次，写入先读后写
+quiet_hours: 午休、盘前、盘后、夜间静默
+daily_summary: 收盘那次发一条「今日无触发 / 今日触发汇总」，避免误以为系统坏了
+alert_levels:
+  - info
+  - attention
+  - action
+notify:
+  channel: {{NOTIFY_CHANNEL}}
+  target: {{NOTIFY_TARGET}}
+  content_rule: 通知只带文本摘要与关键数字，不放本地 HTML 路径，不暴露持仓金额细节
+  native_reminder: 平台原生提醒为写操作且是全量覆盖语义，需单独授权，改前先读回全部字段
+disclaimer: references/disclaimer.md

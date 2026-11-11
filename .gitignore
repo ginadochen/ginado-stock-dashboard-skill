@@ -1,0 +1,62 @@
+# 默认拒绝：任何新文件都不会意外进入仓库
+*
+!*/
+
+# 允许提交的顶层文档
+!LICENSE
+!NOTICE
+!README.md
+!CHANGELOG.md
+!PRIVACY.md
+!SECURITY.md
+!SKILL.md
+!CONTRIBUTING.md
+!.gitignore
+
+# 允许提交的代码与文档目录内容
+!scripts/*.py
+!scripts/*.md
+!references/*.md
+!docs/*.md
+!.github/workflows/*.yml
+!.github/workflows/*.yaml
+
+# 模板与演示数据：只放行明确的白名单后缀
+!assets/templates/*.example
+!assets/templates/*.md
+!assets/demo/*.json
+!assets/demo/*.md
+!example/*.html
+!example/stocks/*.html
+!example/*.md
+
+# 明确排除（即使路径命中上面的规则）
+.sandbox/
+dist/
+__pycache__/
+*.pyc
+*.zip
+*.yaml
+*.yml
+!*.example
+!*.yaml.example
+!/.github/workflows/*.yml
+!/.github/workflows/*.yaml
+*.json
+!assets/demo/*.json
+!example/*.json
+hosts.yml
+*_token*
+*.pem
+*.key
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+*.csv
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
