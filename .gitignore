@@ -12,6 +12,7 @@
 !SKILL.md
 !CONTRIBUTING.md
 !.gitignore
+!.gitattributes
 
 # 允许提交的代码与文档目录内容
 !scripts/*.py

@@ -70,9 +70,8 @@ stock-dashboard-skill/
 ├─ references/              口径 / 方法论 / 调度 / 踩坑 / 免责
 ├─ assets/templates/        agent.md 模板 + *.yaml.example
 ├─ assets/demo/             虚构行情财报快照
-├─ example/                 demo-offline 生成的成品看板
-├─ docs/PRIVACY-AUDIT.md    发布前隐私验收
-└─ .github/workflows/       CI：隐私扫描 + 离线回归
+├─ docs/                    发布前隐私验收 + CI 模板（verify.yml.example）
+└─ example/                 demo-offline 生成的成品看板
 ```
 
 ## 隐私设计
@@ -80,6 +79,7 @@ stock-dashboard-skill/
 - `.gitignore` 采用**默认拒绝**（`*` + `!` 白名单），新文件不会意外进入仓库
 - `privacy_check.py` 扫描金额、姓名、聊天 ID、绝对路径、token、自动化 ID、邮箱/手机/IP
 - CI 与 pre-commit 双跑；发布前需独立 clone 复扫
+- **GitHub Actions 默认未启用**：受发布凭据的 scope 限制，CI 以 `docs/verify.yml.example` 形式保留。启用方式：在网页上新建 `.github/workflows/verify.yml` 并粘贴其内容（网页操作不受 scope 限制），或用带 `workflow` scope 的 token 提交。
 - 详见 [PRIVACY.md](PRIVACY.md) 与 [SECURITY.md](SECURITY.md)
 
 ## 数据来源与合规

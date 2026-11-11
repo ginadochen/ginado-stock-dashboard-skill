@@ -1,0 +1,101 @@
+name: privacy-and-offline-regression
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: No third-party deps (demo must be offline-capable)
+        run: python --version
+
+      - name: Privacy scan (must be 0 hits)
+        run: python scripts/privacy_check.py --root . --strict
+
+      - name: Template hardcode scan
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          bad = []
+          pats = [
+              (r'[A-Za-z]:\\\\', 'windows-absolute-path'),
+              (r'\b\d{6,}\.\d{2,}\b', 'precise-amount'),
+              (r'gh[pousr]_[A-Za-z0-9]{20,}', 'token'),
+              (r'github_pat_[A-Za-z0-9_]{20,}', 'token'),
+              (r'\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b', 'uuid'),
+              (r'[\w.+-]+@[\w-]+\.[\w.]+', 'email'),
+          ]
+          for p in pathlib.Path('assets/templates').iterdir():
+              if not p.is_file():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              for pat, label in pats:
+                  if re.search(pat, s):
+                      bad.append(f'{p.name}: {label}')
+          for p in pathlib.Path('references').glob('*.md'):
+              s = p.read_text(encoding='utf-8')
+              for pat, label in pats:
+                  if re.search(pat, s):
+                      bad.append(f'{p.name}: {label}')
+          if bad:
+              print('FAIL:')
+              print('\n'.join(bad))
+              sys.exit(1)
+          print('template/reference hardcode scan OK')
+          PY
+
+      - name: Script path inference scan
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          # privacy_check.py necessarily contains path/token regexes as data;
+          # skip it when looking for real hardcoded paths.
+          bad = []
+          for p in pathlib.Path('scripts').glob('*.py'):
+              if p.name == 'privacy_check.py':
+                  continue
+              s = p.read_text(encoding='utf-8')
+              if re.search(r'Path\(__file__\)\s*\.resolve\(\)\s*\.parent\s*\.parent', s):
+                  bad.append(f'{p.name}: infers root from __file__')
+              if re.search(r"['\"][A-Za-z]:[\\\\/]", s):
+                  bad.append(f'{p.name}: hardcoded drive path')
+          if bad:
+              print('FAIL:'); print('\n'.join(bad)); sys.exit(1)
+          print('script path scan OK')
+          PY
+
+      - name: Offline demo regression (clone -> build -> 7 pages)
+        run: |
+          rm -rf /tmp/skill-demo
+          python scripts/instance.py --root /tmp/skill-demo --mode demo
+          python scripts/build_dashboard.py --root /tmp/skill-demo
+          python scripts/build_stock_pages.py --root /tmp/skill-demo
+          python scripts/layout_check.py --root /tmp/skill-demo
+          python scripts/privacy_check.py --root /tmp/skill-demo --scope instance
+          test -f /tmp/skill-demo/dashboard/index.html
+          test "$(find /tmp/skill-demo/dashboard/stocks -name '*.html' | wc -l)" -ge 1
+          echo "offline regression OK"
+
+      - name: Python syntax check
+        run: python -m compileall -q scripts
+
+      - name: Verify no ignored files were committed
+        run: |
+          git ls-files | grep -E '(^|/)(config|data|state|logs|archive|tmp|\.sandbox|dist)/' && exit 1 || true
+          git ls-files | grep -Ei '\.(jpg|jpeg|png|gif|pdf|pem|key|log|csv)$' && exit 1 || true
+          echo "tracked files OK"

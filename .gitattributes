@@ -1,0 +1,11 @@
+# Store all text files with LF in the repository, regardless of the
+# contributor's platform. This keeps generated HTML/Python diffs stable.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
