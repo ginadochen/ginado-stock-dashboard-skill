@@ -91,6 +91,65 @@
 - 报告期按自然年季度对齐；A 股 Q3 与港股 H1 的周期差必须标注。
 - 近 8 季不足时按实际期数，不补零、不编造；管理层措辞/指引、经营现金流、分部数据若无结构化字段，标「未覆盖」。
 
+## 可选模块快照（宏观 / 新闻）
+
+两个模块都是**可选**的：文件不存在就不渲染对应区块，不影响首页其余部分。两者均按「含该文件的最新目录」独立读取，**不与 `quotes.json` 绑定**——宏观是周/月频、新闻是日频，跟着行情快照走会读不到。
+
+### macro.json
+
+```
+{
+  "source": "...", "as_of": "...", "currency": "mixed",
+  "indicators": [
+    { "key": "cn_cpi", "region": "CN", "name": "CPI 同比",
+      "value": 0.4, "unit": "%",
+      "period": "2025-12",            // 数据截止期
+      "published": "2026-01-03",      // 数据披露日
+      "indicator_name": "CPI:当期同比:月(%)",
+      "status": "ok",                 // ok | uncovered
+      "forecast": null, "former": null,
+      "reason": null }                // status=uncovered 时必填
+  ],
+  "calendar": {
+    "next_publish": { "region": "...", "event": "...", "date": "...", "time": "...", "matched": "..." },
+    "decision_events": [ { "region": "...", "date": "...", "event": "...", "kind": "decision" } ],
+    "events": [ { "region": "...", "date": "...", "time": "...", "event": "...", "kind": "data|policy_speech|other" } ]
+  },
+  "coverage": {
+    "total_cards": 8, "with_value": 7,
+    "uncovered": ["us_policy_rate"],
+    "cn_us_note": "中国为当期值+同比，美国为实际/预期/前值，不可直接比较"
+  }
+}
+```
+
+- `period` 与 `published` **必须分开存**。「11 月看到 9 月的数」是常态，只写一个 `as_of` 会让人误以为是当期值。
+- `status: uncovered` 时 `value` 置 null、`reason` 必填；**禁止用旧值或推算值填充**。
+- 中美口径不同（当期值+同比 vs 实际/预期/前值），`coverage.cn_us_note` 里必须写明「不可直接比较」；页面只并排看方向。
+- `next_publish` 为 null 是合法状态：日历里确实可能没有白名单事件。**不允许按历史规律补一个日期**。
+
+### news.json
+
+```
+{
+  "source": "...", "as_of": "...", "window_hours": 48, "terms_version": 1,
+  "items": [
+    { "id": "...", "tier": "A",              // A 个股 / B 行业 / C 背景
+      "title": "...", "source_media": "...",
+      "publish_time": 1767579300,            // Unix 秒
+      "url": "", "matched_term": "净息差", "owner": "sh601398",
+      "relate_stock": [ { "code": "sh601398", "name": "..." } ] }
+  ],
+  "stats": { "A": 2, "B": 2, "C": 2 },
+  "excluded": [ { "title": "...", "reason": "...", "would_be_tier": "A" } ]
+}
+```
+
+- `tier` 只有 A / B / C。A 以 `relate_stock` 命中 watchlist + peers 白名单为**唯一**判据；B 由本地字面匹配产生；C 是板块代码、聚合稿与语义检索补充。
+- `publish_time` 统一 Unix 秒，由构建脚本按 `window_hours` 过滤并格式化，避免时区与格式歧义。
+- `excluded` 必须保留：它既是「过滤确实生效」的证据，也是排查误杀的入口。
+- 只存标题、来源、时间、链接与命中词，**不存正文**，避免版权与语境失真。
+
 ## 置信度
 
 | 值 | 含义 | 通知要求 |

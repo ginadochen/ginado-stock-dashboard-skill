@@ -1,0 +1,159 @@
+# 宏观指标定义（可选模块）
+# 用途：让看板首屏有一个「环境」视角，而不是只有自己的持仓。
+# 取数由自动化会话调用数据源完成，本文件只描述「取哪几项、怎么排序、缺了怎么说」。
+# scripts/ 只读本文件，不调用任何网络接口。
+as_of: {{AS_OF}}
+source: {{PRIMARY_SOURCE}}
+
+fetch_rules:
+  allowed_params: [mode, names, year, limit, area, region, date]
+  forbidden_params: [start, end]
+  forbidden_reason: >-
+    多数宏观接口传 start/end 会返回整段历史（实测有单次返回近 300 万字符的情况），
+    直接撑爆会话上下文。只用 limit 控制条数。
+  no_inference: true   # 取不到就标「未覆盖」，禁止按历史规律推算数值或公布日
+
+# ---------------------------------------------------------------------------
+# 首屏卡片：建议 6–8 项，按「跟你的持仓真有关系」挑选，不要把所有指标都列上。
+# path       = 一篮子接口里的取数路径
+# row_match  = 同期限多条混装行时的识别字段
+# match_name = 事件表按 IndicatorName 精确匹配的关键词
+# pick       = 排序取值规则，禁止直接取 items[0]
+# ---------------------------------------------------------------------------
+indicators:
+  - key: cn_cpi
+    region: CN
+    name: CPI 同比
+    unit: "%"
+    list_code: cn_cpi_ppi
+    row_match: {field: CPI_CPI_YOY}
+    value_field: CPI_CPI_YOY
+    period_field: CPI_END_DATE
+    published_field: CPI_INFO_DATE
+    pick: max_period_then_field
+    relate_to: 消费类标的 · 居民购买力
+
+  - key: cn_ppi
+    region: CN
+    name: PPI 同比
+    unit: "%"
+    list_code: cn_cpi_ppi
+    row_match: {field: PPI_PPI_YOY}
+    value_field: PPI_PPI_YOY
+    period_field: CPI_END_DATE
+    published_field: CPI_INFO_DATE
+    pick: max_period_then_field
+    relate_to: 上游资源与制造类标的 · 工业品价格与成本
+
+  - key: cn_pmi
+    region: CN
+    name: 制造业 PMI
+    unit: ""
+    list_code: cn_core_p1
+    path: PMI.PMI_PMI_MANU
+    period_field: PMI_END_DATE
+    published_field: PMI_INFO_DATE
+    pick: single_latest
+    relate_to: 制造类标的 · 景气与排产
+
+  - key: cn_m1
+    region: CN
+    name: M1 同比
+    unit: "%"
+    list_code: cn_core_p1
+    path: CURV.CURV_M1_YOY
+    period_field: CURV_END_DATE
+    published_field: CURV_INFO_DATE
+    pick: single_latest
+    relate_to: 全市场 · 流动性与风险偏好
+
+  - key: cn_gdp
+    region: CN
+    name: GDP 当季实际同比
+    unit: "%"
+    list_code: cn_core_p1
+    path: GDP.GDP_REAL_GDP_CUR_YOY
+    period_field: GDP_END_DATE
+    published_field: GDP_INFO_DATE
+    pick: single_latest
+    relate_to: 全市场 · 总需求基线
+
+  - key: us_cpi
+    region: US
+    name: CPI 月率
+    unit: "%"
+    list_code: us_inflation
+    match_name: [CPI 月率]
+    exclude_name: [PCE, PPI, 预期, 核心CPI]
+    value_field: ActualValue
+    forecast_field: ForecastValue
+    former_field: FormerValue
+    period_field: OccurDate
+    published_field: OccurDate
+    pick: max_occurdate_after_name_match
+    relate_to: 港股与成长股估值 · 美元流动性
+
+  - key: us_employment
+    region: US
+    name: 就业 · 最近公布
+    unit: ""
+    list_code: us_employment
+    match_name: [非农就业, 失业率, 平均每小时工资, ADP就业, 平均每周工时]
+    value_field: ActualValue
+    forecast_field: ForecastValue
+    former_field: FormerValue
+    period_field: OccurDate
+    published_field: OccurDate
+    pick: max_occurdate_after_name_match
+    relate_to: 港股与成长股估值 · 利率路径
+
+  - key: us_policy_rate
+    region: US
+    name: 联邦基金利率
+    unit: "%"
+    list_code: us_policy_rate_anchor
+    match_name: [联邦基金, 利率决议, 目标区间]
+    value_field: ActualValue
+    forecast_field: ForecastValue
+    former_field: FormerValue
+    period_field: OccurDate
+    published_field: OccurDate
+    pick: max_occurdate_after_name_match
+    relate_to: 港股与成长股估值 · 折现率
+
+us_event_rules:
+  sort_by: OccurDate
+  sort_order: desc
+  forecast_empty_display: "—"   # 预期值为空时留空，禁止填 0
+  numeric_only: true            # ActualValue 为「未公布」等非数值时跳过
+  name_exact_match: true
+  mixed_indicators_warning: >-
+    美国宏观接口常把多个不同指标混装在同一张表里（例如通胀表里同时有核心 PCE、
+    联储通胀预期、PPI 月率），且返回顺序不按时间。必须本地排序 + 按指标名精确匹配。
+
+# ---------------------------------------------------------------------------
+# 公布日历 / 倒计时 / 提醒
+# ---------------------------------------------------------------------------
+calendar:
+  list_code: cn_calendar_future
+  limit: 60
+  region_keep: [中国, 美国]
+  countdown_keywords: [CPI, 居民消费价格, PPI, GDP, 国民经济运行, 非农, 利率决议, 议息, 失业率]
+  decision_keywords: [利率决议, 议息会议, FOMC 会议, 货币政策会议决议]
+  speech_keywords: [发表讲话, 讲话, 会议纪要]
+  exclude_keywords: [CFTC, 持仓报告, 移仓换月, 期货到期]
+  remind_lead_days: 1
+  max_reminders_per_day: 1
+  no_inference: true
+  note: >-
+    日历是自然语言事件、没有指标代码，匹配不到就显示「未覆盖」。
+    倒计时经常为空属正常状态，不要按历史规律补一个日期上去。
+
+display:
+  countdown_bar: true
+  panel_default_collapsed: true
+  missing_text: 未覆盖
+  missing_policy: 不推算、不用旧值冒充当期值
+  cn_us_comparison: 只并排展示方向与数据期，不画同一条曲线、不算差值
+  stale_label: 截至 {period}
+  currency: mixed

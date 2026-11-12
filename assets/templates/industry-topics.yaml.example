@@ -1,0 +1,89 @@
+# 细分行业新闻词表与分层规则（可选模块）
+# 用途：只看跟你持仓/观察池真正相关的新闻，而不是一屏财经资讯流。
+# 下面 6 组是演示标的，换成你自己的标的即可；词表用语尽量细分。
+as_of: {{AS_OF}}
+version: 1
+
+display:
+  window_hours: 48
+  default_visible: 5
+  tier_c_default_collapsed: true
+  title_only: true
+  no_summary: true      # 不摘录正文、不做 AI 摘要
+  no_sentiment: true    # 不判断利好利空、不展示券商研报结论
+
+# ---------------------------------------------------------------------------
+# 三层分级
+#   A 个股相关：关联股票字段落在 watchlist + peers 白名单内
+#   B 细分行业：24 小时快讯全量拉取后，在本地做字面匹配
+#   C 板块/背景：板块代码、聚合稿、语义检索补充里复检不通过的
+# 只有 A 类值得推送，B/C 只进看板。
+# ---------------------------------------------------------------------------
+tiers:
+  A: {label: 个股相关, rule: 关联股票命中白名单, push: true}
+  B: {label: 细分行业, rule: 快讯标题或正文包含行业词（字面匹配）, push: false}
+  C: {label: 板块与背景, rule: 板块代码 / 聚合稿 / 语义检索补充, push: false}
+
+filter:
+  require_literal_match: true
+  whitelist_from: [watchlist.yaml, peers.yaml]
+  # 语义检索接口是「相关」而非「包含」，实测会返回完全不相关的内容，必须本地复检
+  semantic_retrieval_is_untrusted: true
+  aggregator_title_markers: [24h, 盘前线索, 盘点, 周报, 大事记, 早报, 晚报, 一览]
+  # 合规：研报评级类标题本身就是结论，整条排除
+  exclude_title_markers: [研报, 评级, 维持, 优于大市, 目标价, 推荐买入, 金股]
+  dedupe_state_key: news_seen
+
+push:
+  tiers: [A]
+  burst_threshold: 3
+  burst_window_hours: 24
+  merge_with_macro_reminder: true
+  max_messages_per_day: 1
+  notify_target: {{NOTIFY_TARGET}}
+
+# ---------------------------------------------------------------------------
+# 词表：stock_terms 用于个股精确检索，industry_terms 只用于本地字面匹配。
+# 反面教材：「电力」「AI」「新能源」这种大词一定串；
+#          常用词（如「理想」）单独当检索词也一定串。
+# ---------------------------------------------------------------------------
+topics:
+  sh601398:
+    name: 示例银行
+    stock_terms: [示例银行, 601398]
+    industry_terms: [净息差, 存款利率, 不良率, 信贷投放, 拨备覆盖率]
+  sh601857:
+    name: 示例能源
+    stock_terms: [示例能源, 601857]
+    industry_terms: [原油价格, 油价, 炼化, 天然气, 成品油]
+  sh600519:
+    name: 示例白酒
+    stock_terms: [示例白酒, 600519]
+    industry_terms: [白酒批价, 库存周期, 宴席消费, 出厂价, 渠道库存]
+  hk00005:
+    name: 示例银行-H
+    stock_terms: [示例银行-H, 00005]
+    industry_terms: [港元利率, HIBOR, 净息差, 香港信贷]
+  hk00388:
+    name: 示例交易所
+    stock_terms: [示例交易所, 00388]
+    industry_terms: [港股成交额, IPO 募资, 互联互通, 港股通]
+  hk01299:
+    name: 示例保险
+    stock_terms: [示例保险, 01299]
+    industry_terms: [新业务价值, 代理人, 长端利率, 保费收入]
+
+# 全局背景词：与个股无关但影响整体风险偏好，只进 C 类
+global_context_terms: [FOMC, 议息会议, 降息, 美元指数, 北向资金]
+
+fetch:
+  flash:
+    keyword: ""     # 空关键词 = 全量按时间倒序，排序确定、不过滤
+    limit: 100
+  individual:
+    per_stock_terms: true
+    limit: 3
+  industry_supplement:
+    enabled: true
+    untrusted: true
+    limit: 5

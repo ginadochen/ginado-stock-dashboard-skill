@@ -246,6 +246,8 @@ TEMPLATE_MAP = {
     "alert-rules.yaml.example": "alert-rules.yaml",
     "peers.yaml.example": "peers.yaml",
     "journal.yaml.example": "journal.yaml",
+    "macro.yaml.example": "macro.yaml",
+    "industry-topics.yaml.example": "industry-topics.yaml",
 }
 
 

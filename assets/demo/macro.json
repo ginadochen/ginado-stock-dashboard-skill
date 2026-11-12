@@ -1,0 +1,77 @@
+{
+  "source": "demo-fixture (fictional)",
+  "as_of": "2026-01-05T15:00:00+08:00",
+  "currency": "mixed",
+  "region_scope": ["CN", "US"],
+  "config": "config/macro.yaml",
+  "note": "ALL NUMBERS FICTIONAL. 演示用宏观快照，仅用于展示口径标注与「未覆盖」状态。",
+  "indicators": [
+    { "key": "cn_cpi", "region": "CN", "name": "CPI 同比", "value": 0.4, "unit": "%",
+      "period": "2025-12", "published": "2026-01-03", "source_field": "cn_cpi_ppi / CPI_CPI_YOY",
+      "indicator_name": "CPI:当期同比:月(%)", "status": "ok", "forecast": null, "former": null,
+      "relate_to": "示例银行 · 居民购买力" },
+    { "key": "cn_ppi", "region": "CN", "name": "PPI 同比", "value": -1.2, "unit": "%",
+      "period": "2025-12", "published": "2026-01-03", "source_field": "cn_cpi_ppi / PPI_PPI_YOY",
+      "indicator_name": "PPI:当期同比:月(%)", "status": "ok", "forecast": null, "former": null,
+      "relate_to": "示例能源 · 工业品价格与成本" },
+    { "key": "cn_pmi", "region": "CN", "name": "制造业 PMI", "value": 49.6, "unit": "",
+      "period": "2025-12", "published": "2025-12-31", "source_field": "cn_core_p1 / PMI.PMI_PMI_MANU",
+      "indicator_name": "制造业 PMI:当月值", "status": "ok", "forecast": null, "former": null,
+      "relate_to": "示例能源 · 景气与排产" },
+    { "key": "cn_m1", "region": "CN", "name": "M1 同比", "value": 2.1, "unit": "%",
+      "period": "2025-11", "published": "2025-12-12", "source_field": "cn_core_p1 / CURV.CURV_M1_YOY",
+      "indicator_name": "M1:同比", "status": "ok", "forecast": null, "former": null,
+      "relate_to": "全市场 · 流动性" },
+    { "key": "cn_gdp", "region": "CN", "name": "GDP 当季实际同比", "value": 4.4, "unit": "%",
+      "period": "2025-09", "published": "2025-10-20", "source_field": "cn_core_p1 / GDP.GDP_REAL_GDP_CUR_YOY",
+      "indicator_name": "GDP:不变价:当季同比", "status": "ok", "forecast": null, "former": null,
+      "relate_to": "全市场 · 总需求基线" },
+    { "key": "us_cpi", "region": "US", "name": "CPI 月率", "value": 0.2, "unit": "%",
+      "period": "2025-12", "published": "2026-01-03", "source_field": "us_inflation / CPI 月率",
+      "indicator_name": "示例：美国12月CPI月率未季调(%)", "status": "ok",
+      "forecast": 0.3, "former": 0.1,
+      "note": "演示：该表只有月率没有同比，与中国 CPI 同比不同口径",
+      "relate_to": "示例交易所 · 港股估值" },
+    { "key": "us_employment", "region": "US", "name": "就业 · 最近公布", "value": 4.1, "unit": "%",
+      "period": "2025-12", "published": "2026-01-04", "source_field": "us_employment / 失业率",
+      "indicator_name": "示例：美国12月失业率(%)", "status": "ok",
+      "forecast": 4.2, "former": 4.2,
+      "relate_to": "示例交易所 · 利率路径" },
+    { "key": "us_policy_rate", "region": "US", "name": "联邦基金利率", "value": null, "unit": "%",
+      "period": null, "published": null, "source_field": "us_policy_rate_anchor",
+      "indicator_name": null, "status": "uncovered", "forecast": null, "former": null,
+      "reason": "演示：接口本轮返回空对象，标「未覆盖」，不按历史值补位",
+      "relate_to": "示例交易所 · 折现率" }
+  ],
+  "calendar": {
+    "source": "demo-fixture (fictional)",
+    "as_of": "2026-01-05T15:00:00+08:00",
+    "next_publish": {
+      "region": "中国",
+      "event": "统计局公布居民消费价格指数月度报告（演示）",
+      "date": "2026-01-09",
+      "time": "09:30",
+      "matched": "居民消费价格",
+      "kind": "data"
+    },
+    "decision_events": [
+      { "region": "美国", "date": "2026-01-06", "time": "次日凌晨", "event": "FOMC 议息会议（演示）", "kind": "decision" }
+    ],
+    "events": [
+      { "region": "美国", "date": "2026-01-06", "time": "次日凌晨", "event": "FOMC 议息会议（演示）", "kind": "decision" },
+      { "region": "中国", "date": "2026-01-09", "time": "09:30", "event": "统计局公布居民消费价格指数月度报告（演示）", "kind": "data" },
+      { "region": "美国", "date": "2026-01-08", "time": "21:30", "event": "联储官员发表讲话（演示）", "kind": "policy_speech" }
+    ],
+    "excluded_count": 2,
+    "excluded_note": "演示：已剔除持仓报告、合约换月等交易提示类事件；官员讲话只列不推",
+    "coverage_note": "演示：决策事件只认「利率决议 / 议息会议 / FOMC 会议」，匹配不到就留空，不推算日期"
+  },
+  "coverage": {
+    "total_cards": 8,
+    "with_value": 7,
+    "uncovered": ["us_policy_rate"],
+    "lag_note": "演示：美国数据在北京时间晚间公布，最长滞后至下一交易日；卡片一律标数据期与披露日",
+    "cn_us_comparable": false,
+    "cn_us_note": "中国为「当期值 + 同比」，美国为「实际 / 预期 / 前值」，只并排看方向，不画同一条曲线、不算差值"
+  }
+}

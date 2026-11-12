@@ -149,12 +149,72 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--text-3);margin-top:8px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-3);line-height:1.8}
+
+/* macro env bar + news layers (optional module) */
+.env-bar{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:0 0 16px;padding:11px 15px;
+  border:1px solid var(--border);border-radius:12px;background:var(--panel)}
+.env-bar .lab{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.env-bar .ev{font-size:12.5px;font-weight:600}
+.env-bar .meta{font-size:11px;color:var(--text-3)}
+.env-bar .spacer{flex:1 1 auto}
+.env-bar .stat{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2)}
+.env-bar .dot-s{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
+.env-bar .dot-s.gap{background:var(--text-3)}
+.countdown{display:inline-block;padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600;
+  background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn);margin-left:4px}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.macro-card{border:1px solid var(--border);border-radius:10px;padding:11px 12px;background:var(--panel-2)}
+.macro-card.uncovered{border-style:dashed}
+.macro-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.macro-region{font-size:9.5px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);
+  color:var(--text-3);flex:none}
+.macro-region.us{color:var(--accent-2);border-color:var(--accent-2)}
+.macro-nm{font-size:11px;color:var(--text-2)}
+.macro-val{font-size:22px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.macro-val .u{font-size:11.5px;font-weight:500;color:var(--text-3);margin-left:2px}
+.macro-card.uncovered .macro-val{font-size:14px;font-weight:500;color:var(--text-3)}
+.macro-ind{font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.5;min-height:30px}
+.macro-meta{display:flex;justify-content:space-between;gap:5px;font-size:10px;color:var(--text-3);
+  margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.macro-gap{font-size:10px;color:var(--text-2);margin-top:3px}
+.macro-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--text-3);
+  margin-top:10px;line-height:1.7}
+.news-group{margin-top:13px}
+.news-group-h{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--text-3);margin-bottom:5px}
+.news-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.news-item:last-child{border-bottom:0}
+.news-item .bar{width:2px;border-radius:2px;background:var(--border);flex:none;margin:3px 0}
+.news-item.a .bar{background:var(--accent)}
+.news-item.b .bar{background:var(--accent-2)}
+.news-title{font-size:12.5px;line-height:1.55}
+.news-title a{color:inherit;text-decoration:none}
+.news-title a:hover{color:var(--accent)}
+.news-meta{display:flex;gap:9px;flex-wrap:wrap;font-size:10px;color:var(--text-3);margin-top:4px}
+.news-tag{padding:1px 5px;border:1px solid var(--border);border-radius:4px}
+.news-empty{padding:13px;border:1px dashed var(--border);border-radius:9px;text-align:center;
+  font-size:11.5px;color:var(--text-3)}
+.card.sec-toggle{padding:0}
+.card.sec-toggle>details{border:0;margin:0;background:transparent;padding:0}
+.card.sec-toggle>details>summary{padding:17px 20px;font-size:12px}
+.card.sec-toggle summary h2{display:inline;margin:0;font-size:15px;font-weight:620;color:var(--text)}
+.card.sec-toggle summary .hint{margin-left:auto;font-size:11px;color:var(--text-3)}
+.card.sec-toggle .collapse-body{padding:0 20px 17px}
+@media(max-width:980px){.macro-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.macro-grid{grid-template-columns:1fr}}
 </style></head><body><div class="wrap">
 <div class="top"><div class="brand"><h1>持仓看板</h1><span class="hint mono">Stock Dashboard Demo</span></div><div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
 <div class="status-chip"><span class="dot"></span>已收盘 · 2026-01-05</div>
 <div class="status-chip"><span class="dot warn"></span>主源正常 · 校准源降级</div>
 <button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div></div>
 <div class="demo-banner"><span class="tag">DEMO</span><div><b>演示数据</b>　本页所有价格、财报、持仓金额与成本均为<b>完全虚构</b>的示例值，与任何真实证券、账户或行情无关。标的仅借用公开证券代码作为标识。<div class="hint" style="margin-top:4px">跳过录入步骤时自动生成；切换到 live 模式会强制清空演示数据并要求二次确认。</div></div></div>
+<div class="env-bar">
+<span class="lab">下一个数据</span>
+<span class="ev">统计局公布居民消费价格指数月度报告（演示）</span>
+<span class="meta">中国 · 2026-01-09 09:30</span><span class="countdown">4 天后</span>
+<span class="spacer"></span>
+<span class="stat"><i class="dot-s gap"></i>宏观 7/8 已覆盖</span>
+<span class="stat"><i class="dot-s"></i>新闻 A2 · B2 · C2</span>
+</div>
 <section class="card hero">
 <div class="eyebrow">账户总资产 · CNY</div>
 <div class="hero-value">500,000.00 <span style="font-size:16px;color:var(--text-3)">CNY</span></div>
@@ -168,6 +228,60 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <div class="brief warn"><div class="brief-ico">!</div><div class="brief-body"><div class="brief-title">需注意</div>10Y PE/PB percentile 未覆盖：hk00005、hk01299。这些标的区间标为<b>参考级 / 低置信度</b>，需人工确认；<b>价格位置不等于估值分位</b>，未用 K 线分位冒充。</div></div>
 <div class="brief bad"><div class="brief-ico">!</div><div class="brief-body"><div class="brief-title">需行动 · 重新评估</div>浮亏超过阈值时先做逻辑检验，而不是直接补仓：<b>摊薄成本只改变账面数字，不改善盈利能力</b>。请先在交易日记写下买入理由与失效条件。</div></div>
 </section>
+<section class="card sec-toggle"><details><summary><h2>宏观环境 · 8 项</h2><span class="hint">7/8 已覆盖 · 点击展开</span></summary><div class="collapse-body"><div class="macro-grid">
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region">中国</span><span class="macro-nm">CPI 同比</span></div>
+<div class="macro-val">0.4<span class="u">%</span></div>
+<div class="macro-ind">CPI:当期同比:月(%)</div>
+<div class="macro-meta"><span>截至 2025-12</span><span>公布 2026-01-03</span></div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region">中国</span><span class="macro-nm">PPI 同比</span></div>
+<div class="macro-val">-1.2<span class="u">%</span></div>
+<div class="macro-ind">PPI:当期同比:月(%)</div>
+<div class="macro-meta"><span>截至 2025-12</span><span>公布 2026-01-03</span></div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region">中国</span><span class="macro-nm">制造业 PMI</span></div>
+<div class="macro-val">49.6<span class="u"></span></div>
+<div class="macro-ind">制造业 PMI:当月值</div>
+<div class="macro-meta"><span>截至 2025-12</span><span>公布 2025-12-31</span></div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region">中国</span><span class="macro-nm">M1 同比</span></div>
+<div class="macro-val">2.1<span class="u">%</span></div>
+<div class="macro-ind">M1:同比</div>
+<div class="macro-meta"><span>截至 2025-11</span><span>公布 2025-12-12</span></div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region">中国</span><span class="macro-nm">GDP 当季实际同比</span></div>
+<div class="macro-val">4.4<span class="u">%</span></div>
+<div class="macro-ind">GDP:不变价:当季同比</div>
+<div class="macro-meta"><span>截至 2025-09</span><span>公布 2025-10-20</span></div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region us">美国</span><span class="macro-nm">CPI 月率</span></div>
+<div class="macro-val">0.2<span class="u">%</span></div>
+<div class="macro-ind">示例：美国12月CPI月率未季调(%)</div>
+<div class="macro-meta"><span>截至 2025-12</span><span>公布 2026-01-03</span></div>
+<div class="macro-gap">实际 0.2 vs 预期 0.3　低于 0.1</div>
+</div>
+<div class="macro-card">
+<div class="macro-top"><span class="macro-region us">美国</span><span class="macro-nm">就业 · 最近公布</span></div>
+<div class="macro-val">4.1<span class="u">%</span></div>
+<div class="macro-ind">示例：美国12月失业率(%)</div>
+<div class="macro-meta"><span>截至 2025-12</span><span>公布 2026-01-04</span></div>
+<div class="macro-gap">实际 4.1 vs 预期 4.2　低于 0.1</div>
+</div>
+<div class="macro-card uncovered">
+<div class="macro-top"><span class="macro-region us">美国</span><span class="macro-nm">联邦基金利率</span></div>
+<div class="macro-val">未覆盖</div>
+<div class="macro-ind">演示：接口本轮返回空对象，标「未覆盖」，不按历史值补位</div>
+</div>
+</div>
+<div class="macro-legend"><span>中国为「当期值 + 同比」，美国为「实际 / 预期 / 前值」，频率亦不同——只并排看方向，不画同一条曲线、不算差值</span><span>数据期与披露日分列，不拿旧值冒充当期值</span><span>预期值接口未返回时留空，不填 0</span></div>
+<div class="src">来源 demo-fixture (fictional)；取数 2026-01-05T15:00:00+08:00；指标定义 config/macro.yaml。中国为「当期值 + 同比」，美国为「实际 / 预期 / 前值」，只并排看方向，不画同一条曲线、不算差值</div>
+</div></details></section>
 <section class="card"><div class="card-head"><h2>持仓与补仓摊薄</h2><span class="hint">护栏：分母锁定 / 整手 / 集中度红线 / 资金上限</span></div>
 <div class="pos-grid">
 <div class="pos-cell"><div class="k">持股</div><div class="v">800 股</div></div>
@@ -288,7 +402,26 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <div class="legend"><span><i style="background:var(--accent)"></i>现价</span><span><i style="background:rgba(63,194,139,.6)"></i>可接受带</span><span><i style="background:var(--panel-2);border:1px solid var(--border)"></i>52 周区间</span><span>价格轴只表达位置，<b>不是估值分位</b>。</span></div>
 </section>
 <div class="grid g2">
-<section class="card"><div class="card-head"><h2>分红日历</h2><span class="hint">仅已实施派息，不虚构未来除权日</span></div>
+<section class="card"><div class="card-head"><h2>行业新闻 · 只看跟自己有关的</h2><span class="hint">48 小时窗口 · 语义检索结果已本地复检</span></div>
+<div class="news-group"><div class="news-group-h">个股相关 · A 类 · 2 条</div>
+<div class="news-item a"><div class="bar"></div><div><div class="news-title">示例交易所公布 12 月日均成交额环比变动（演示标题）</div><div class="news-meta"><span>演示来源·甲</span><span class="mono">01-05 10:15</span><span class="mono">hk00388</span><span class="news-tag">命中「示例交易所」</span></div></div></div>
+<div class="news-item a"><div class="bar"></div><div><div class="news-title">示例保险新业务价值口径调整，重述上年同期数据（演示标题）</div><div class="news-meta"><span>演示来源·乙</span><span class="mono">01-04 09:30</span><span class="mono">hk01299</span><span class="news-tag">命中「示例保险」</span></div></div></div>
+</div>
+<div class="news-group"><div class="news-group-h">细分行业 · B 类 · 2 条</div>
+<div class="news-item b"><div class="bar"></div><div><div class="news-title">白酒批价节前回落，渠道库存周期被拉长（演示标题）</div><div class="news-meta"><span>演示来源·丙</span><span class="mono">01-05 11:40</span><span class="mono">sh600519</span><span class="news-tag">命中「白酒批价」</span></div></div></div>
+<div class="news-item b"><div class="bar"></div><div><div class="news-title">存款利率再度下调，商业银行净息差继续承压（演示标题）</div><div class="news-meta"><span>演示来源·甲</span><span class="mono">01-04 16:20</span><span class="mono">sh601398</span><span class="news-tag">命中「净息差」</span></div></div></div>
+</div>
+<details><summary>板块与背景 · C 类 · 2 条（已折叠，避免刷屏）</summary><div class="detail-body">
+<div class="news-item c"><div class="bar"></div><div><div class="news-title">港股成交额连续三日低于均值，板块轮动放缓（演示标题）</div><div class="news-meta"><span>演示来源·丁</span><span class="mono">01-05 08:05</span></div></div></div>
+<div class="news-item c"><div class="bar"></div><div><div class="news-title">盘前线索：多板块异动汇总（演示聚合稿）</div><div class="news-meta"><span>演示来源·戊</span><span class="mono">01-03 21:00</span></div></div></div>
+</div></details>
+<details><summary>本轮过滤掉 2 条（点开看理由）</summary><div class="detail-body">
+· 示例券商：维持示例银行「优于大市」评级（演示标题）<br><span style="color:var(--text-3)">标题含券商评级，按合规规则整条排除（不展示研报结论）</span><br>
+· 某地区水务集团董事会治理改革综述（演示标题）<br><span style="color:var(--text-3)">语义检索返回但与关键词无关，本地字面复检不通过</span><br>
+</div></details>
+<div class="src">来源 demo-fixture (fictional)；取数 2026-01-05T15:00:00+08:00；词表 config/industry-topics.yaml。只给标题、来源、时间与命中词，不摘录正文、不展示研报结论、不判断利好利空。</div>
+</section>
+<section class="card sec-toggle"><details><summary><h2>分红日历</h2><span class="hint">仅已实施派息，不虚构未来除权日 · 点击展开</span></summary><div class="collapse-body">
 <table><thead><tr><th>标的</th><th>除权日</th><th class="num">每股派息</th><th>报告期</th></tr></thead><tbody>
 <tr><td class="mono">sh601398</td><td class="mono">2025-06-10</td><td class="num mono">0.19</td><td>2024-FY</td></tr>
 <tr><td class="mono">sh601857</td><td class="mono">2025-06-11</td><td class="num mono">0.29</td><td>2024-FY</td></tr>
@@ -296,8 +429,8 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <tr><td class="mono">hk00005</td><td class="mono">2025-06-13</td><td class="num mono">2.35</td><td>2024-FY</td></tr>
 </tbody></table>
 <div class="src">未覆盖：hk00388、hk01299。接口无返回时标未覆盖，不假装全都有。</div>
-<div class="src">检测到新 ex_date 会自动重算该股买入区间；双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div></section>
-<section class="card"><div class="card-head"><h2>收益曲线 · 数据积累中</h2><span class="hint">不足 10 个交易日不画曲线</span></div>
+<div class="src">检测到新 ex_date 会自动重算该股买入区间；双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div></div></details></section>
+<section class="card sec-toggle"><details><summary><h2>收益曲线 · 数据积累中</h2><span class="hint">不足 10 个交易日不画曲线 · 点击展开</span></summary><div class="collapse-body">
 <div class="eyebrow">已积累 1 / 10 个交易日</div>
 <div class="mini-progress"><i style="width:10%"></i></div>
 <div class="src">两三个点画出来的走势没有信息量，只会制造虚假精确感。收盘自动写 nav.json（总资产 / 现金 / 市值 / 基准收盘），攒够 10 个交易日再上曲线。</div>
@@ -305,7 +438,7 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <div class="event-row"><span>价格告警</span><span class="mono">0 条</span></div>
 <div class="event-row"><span>财报速递</span><span class="mono">0 条</span></div>
 <div class="event-row"><span>数据源自检</span><span class="mono">0 次</span></div>
-</section></div>
+</div></details></section></div>
 <div class="grid g2">
 <section class="card"><div class="card-head"><h2>交易日记 · 先写理由再看数字</h2><span class="hint">防死扛的行为修正</span></div>
 <label class="check-item"><input type="checkbox"><span>当初的买入理由现在还成立吗</span></label>
@@ -338,13 +471,13 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 </section></div>
 <section class="card"><div class="card-head"><h2>口径与方法</h2><span class="hint">渐进式披露，按需展开</span></div>
 <details><summary>可接受价格带的算法</summary><div class="detail-body">估值锚 × 安全边际折算价格带，再用 52 周高低收窄；同卡标注估值偏贵程度。公式：d = max(0, (anchor_percentile - 50) / 100) * safety_factor + base_margin。每个区间带安全边际、触发确认条件、失效条件三件套；按行业选锚（红利看股息率分位、周期股看 PB 不用 PE、成长股看 PE/PEG），未盈利或次新标的不给区间。<b>到价不等于买点</b>。</div></details>
-<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-11T13:51:16+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
+<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-12T10:27:55+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
 <details><summary>三重币种与双源分歧</summary><div class="detail-body">财报记账本位币、股价交易币种、账户展示币种三者分离；跨市场只比比率与增速，不比绝对金额；A/H 按自然年季度对齐并标注周期差。双源冲突时两个值同时保留并标 conflict，禁止静默取一。汇率 HKDCNY = 0.85（demo-fixture (fictional)）。</div></details>
 <details><summary>未取到的数据</summary><div class="detail-body">10Y PE/PB percentile：hk00005、hk01299。原因：demo: 模拟校准源不可用。处理：保持 confidence: reference，禁止用价格分位冒充估值分位。一致预期若机构数为 0，标「平台测算值，非一手机构一致预期，需核实原文」。缺口标「未覆盖」不代表该指标为零或中性。</div></details>
 <details><summary>图表与页面规范</summary><div class="detail-body">分组柱状图 + 真实金额纵轴 + 0 线；柱端数值常显（按量级自适应精度、防重叠避让）；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28；正值标柱顶、亏损标柱底。所有网页单文件自包含，不引用外链 CSS/JS。</div></details>
 </section>
 <div class="foot">
-<div class="src">数据来源：demo-fixture（2026-01-05）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-11T13:51:16+08:00。</div>
+<div class="src">数据来源：demo-fixture（2026-01-05）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-12T10:27:55+08:00。</div>
 <div>本页面全部为<b>虚构演示数据</b>，仅用于展示样式与交互，不代表任何真实行情或持仓。</div>
 <div style="margin-top:8px">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</div>
 </div></div>

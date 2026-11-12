@@ -1,0 +1,107 @@
+{
+  "source": "demo-fixture (fictional)",
+  "as_of": "2026-01-05T15:00:00+08:00",
+  "window_hours": 48,
+  "terms_version": 1,
+  "config": "config/industry-topics.yaml",
+  "note": "ALL HEADLINES FICTIONAL. 演示用新闻快照，仅用于展示 A/B/C 分层与过滤规则，不代表任何真实事件。",
+  "items": [
+    {
+      "id": "DEMO-A-001",
+      "tier": "A",
+      "title": "示例交易所公布 12 月日均成交额环比变动（演示标题）",
+      "source_media": "演示来源·甲",
+      "publish_time": 1767579300,
+      "url": "",
+      "matched_term": "示例交易所",
+      "matched_field": "title",
+      "owner": "hk00388",
+      "relate_stock": [{ "code": "hk00388", "name": "示例交易所" }]
+    },
+    {
+      "id": "DEMO-A-002",
+      "tier": "A",
+      "title": "示例保险新业务价值口径调整，重述上年同期数据（演示标题）",
+      "source_media": "演示来源·乙",
+      "publish_time": 1767490200,
+      "url": "",
+      "matched_term": "示例保险",
+      "matched_field": "title",
+      "owner": "hk01299",
+      "relate_stock": [{ "code": "hk01299", "name": "示例保险" }]
+    },
+    {
+      "id": "DEMO-B-001",
+      "tier": "B",
+      "title": "白酒批价节前回落，渠道库存周期被拉长（演示标题）",
+      "source_media": "演示来源·丙",
+      "publish_time": 1767584400,
+      "url": "",
+      "matched_term": "白酒批价",
+      "matched_field": "title",
+      "owner": "sh600519",
+      "relate_stock": []
+    },
+    {
+      "id": "DEMO-B-002",
+      "tier": "B",
+      "title": "存款利率再度下调，商业银行净息差继续承压（演示标题）",
+      "source_media": "演示来源·甲",
+      "publish_time": 1767514800,
+      "url": "",
+      "matched_term": "净息差",
+      "matched_field": "title",
+      "owner": "sh601398",
+      "relate_stock": []
+    },
+    {
+      "id": "DEMO-C-001",
+      "tier": "C",
+      "title": "港股成交额连续三日低于均值，板块轮动放缓（演示标题）",
+      "source_media": "演示来源·丁",
+      "publish_time": 1767571500,
+      "url": "",
+      "matched_term": null,
+      "matched_field": "flash",
+      "owner": null,
+      "relate_stock": [],
+      "tier_reason": "板块级描述，未指向任何单一标的"
+    },
+    {
+      "id": "DEMO-C-002",
+      "tier": "C",
+      "title": "盘前线索：多板块异动汇总（演示聚合稿）",
+      "source_media": "演示来源·戊",
+      "publish_time": 1767445200,
+      "url": "",
+      "matched_term": null,
+      "matched_field": "title",
+      "owner": null,
+      "relate_stock": [],
+      "tier_reason": "聚合稿，标题命中聚合标记，降为 C 类"
+    }
+  ],
+  "stats": { "A": 2, "B": 2, "C": 2 },
+  "excluded": [
+    {
+      "title": "示例券商：维持示例银行「优于大市」评级（演示标题）",
+      "source_media": "演示来源·己",
+      "publish_time": 1767445200,
+      "reason": "标题含券商评级，按合规规则整条排除（不展示研报结论）",
+      "would_be_tier": "A"
+    },
+    {
+      "title": "某地区水务集团董事会治理改革综述（演示标题）",
+      "source_media": "演示来源·庚",
+      "publish_time": 1767445200,
+      "reason": "语义检索返回但与关键词无关，本地字面复检不通过",
+      "would_be_tier": "dropped"
+    }
+  ],
+  "push_plan": {
+    "tiers": ["A"],
+    "a_count": 2,
+    "burst": false,
+    "merged_into_daily_digest": true
+  }
+}

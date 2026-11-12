@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 
+## [0.2.0] - 2026-11-12
+
+新增两个**可选**模块：宏观环境与行业新闻。两者默认关闭，有快照才渲染，删掉快照即消失。
+
+### 新增
+
+- `config/macro.yaml` 模板 + `assets/demo/macro.json`：中美 6–8 项指标定义、取数路径、未来日历白名单、提醒规则
+- `config/industry-topics.yaml` 模板 + `assets/demo/news.json`：细分行业词表、A/B/C 分层、过滤与合规规则
+- 首页新增顶部常露的「环境条」（下一个数据倒计时 + 覆盖概览）与可折叠的宏观指标面板
+- 首页新增行业新闻列表：A/B 类直列、C 类折叠、被过滤项可展开看理由
+- `references/pitfalls.md` 新增 5 条（29–33）：语义检索不是字面匹配、宏观接口 `start/end` 陷阱、乱序混装表、一篮子字段的行类型、日历无指标代码
+- `references/data-contract.md` 新增 `macro.json` 与 `news.json` 两个 schema
+
+### 变更
+
+- 分红日历与收益曲线改为默认折叠，给新模块腾出首屏空间
+- `build_dashboard.py` 的宏观/新闻快照按「含该文件的最新目录」独立读取，不与 `quotes.json` 绑定
+- `example/index.html` 重建，包含两个新模块的演示形态
+
 ## [0.1.0] - 2026-11-11
 
 首次公开发布（初始能力包）。

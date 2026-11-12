@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import date, datetime
 from pathlib import Path
 
 from common import (
@@ -170,6 +171,58 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--text-3);margin-top:8px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-3);line-height:1.8}
+
+/* macro env bar + news layers (optional module) */
+.env-bar{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:0 0 16px;padding:11px 15px;
+  border:1px solid var(--border);border-radius:12px;background:var(--panel)}
+.env-bar .lab{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.env-bar .ev{font-size:12.5px;font-weight:600}
+.env-bar .meta{font-size:11px;color:var(--text-3)}
+.env-bar .spacer{flex:1 1 auto}
+.env-bar .stat{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2)}
+.env-bar .dot-s{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
+.env-bar .dot-s.gap{background:var(--text-3)}
+.countdown{display:inline-block;padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600;
+  background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn);margin-left:4px}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.macro-card{border:1px solid var(--border);border-radius:10px;padding:11px 12px;background:var(--panel-2)}
+.macro-card.uncovered{border-style:dashed}
+.macro-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.macro-region{font-size:9.5px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);
+  color:var(--text-3);flex:none}
+.macro-region.us{color:var(--accent-2);border-color:var(--accent-2)}
+.macro-nm{font-size:11px;color:var(--text-2)}
+.macro-val{font-size:22px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.macro-val .u{font-size:11.5px;font-weight:500;color:var(--text-3);margin-left:2px}
+.macro-card.uncovered .macro-val{font-size:14px;font-weight:500;color:var(--text-3)}
+.macro-ind{font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.5;min-height:30px}
+.macro-meta{display:flex;justify-content:space-between;gap:5px;font-size:10px;color:var(--text-3);
+  margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.macro-gap{font-size:10px;color:var(--text-2);margin-top:3px}
+.macro-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--text-3);
+  margin-top:10px;line-height:1.7}
+.news-group{margin-top:13px}
+.news-group-h{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--text-3);margin-bottom:5px}
+.news-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.news-item:last-child{border-bottom:0}
+.news-item .bar{width:2px;border-radius:2px;background:var(--border);flex:none;margin:3px 0}
+.news-item.a .bar{background:var(--accent)}
+.news-item.b .bar{background:var(--accent-2)}
+.news-title{font-size:12.5px;line-height:1.55}
+.news-title a{color:inherit;text-decoration:none}
+.news-title a:hover{color:var(--accent)}
+.news-meta{display:flex;gap:9px;flex-wrap:wrap;font-size:10px;color:var(--text-3);margin-top:4px}
+.news-tag{padding:1px 5px;border:1px solid var(--border);border-radius:4px}
+.news-empty{padding:13px;border:1px dashed var(--border);border-radius:9px;text-align:center;
+  font-size:11.5px;color:var(--text-3)}
+.card.sec-toggle{padding:0}
+.card.sec-toggle>details{border:0;margin:0;background:transparent;padding:0}
+.card.sec-toggle>details>summary{padding:17px 20px;font-size:12px}
+.card.sec-toggle summary h2{display:inline;margin:0;font-size:15px;font-weight:620;color:var(--text)}
+.card.sec-toggle summary .hint{margin-left:auto;font-size:11px;color:var(--text-3)}
+.card.sec-toggle .collapse-body{padding:0 20px 17px}
+@media(max-width:980px){.macro-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.macro-grid{grid-template-columns:1fr}}
 """
 
 JS = r"""
@@ -309,6 +362,163 @@ def badge(text, kind=""):
     return f'<span class="badge {kind}">{esc(text)}</span>'
 
 
+# ---------------------------------------------------------------------------
+# Optional modules: macro environment + industry news
+# Both degrade gracefully — a missing snapshot simply means the card is not
+# rendered, never a fabricated number.
+# ---------------------------------------------------------------------------
+def fmt_macro(v):
+    if v is None:
+        return "—"
+    if isinstance(v, bool):
+        return str(v)
+    if isinstance(v, (int, float)):
+        return f"{v:g}"
+    return str(v)
+
+
+def fmt_ts(ts):
+    if not ts:
+        return "—"
+    try:
+        return datetime.fromtimestamp(int(ts)).strftime("%m-%d %H:%M")
+    except (ValueError, OSError, TypeError):
+        return "—"
+
+
+def render_env_bar(macro, news, snap_date):
+    """Always-visible strip: next release countdown + coverage summary."""
+    out = ['<div class="env-bar">']
+    cal = as_dict((macro or {}).get("calendar"))
+    nxt = as_dict(cal.get("next_publish"))
+    if nxt:
+        base = str((macro or {}).get("as_of") or snap_date)[:10]
+        days = None
+        try:
+            days = (date.fromisoformat(str(nxt.get("date"))) - date.fromisoformat(base)).days
+        except (ValueError, TypeError):
+            days = None
+        cd = f'<span class="countdown">{days} 天后</span>' if isinstance(days, int) and days >= 0 else ''
+        out.append('<span class="lab">下一个数据</span>')
+        out.append(f'<span class="ev">{esc(nxt.get("event", "—"))}</span>')
+        out.append(f'<span class="meta">{esc(nxt.get("region", "—"))} · {esc(nxt.get("date", "—"))} '
+                   f'{esc(nxt.get("time", ""))}</span>{cd}')
+    else:
+        out.append('<span class="lab">下一个数据</span>')
+        out.append('<span class="meta">未覆盖：未来日历中无白名单事件，不按历史规律推算</span>')
+    out.append('<span class="spacer"></span>')
+    cov = as_dict((macro or {}).get("coverage"))
+    if cov:
+        gap = len(as_list(cov.get("uncovered")))
+        out.append(f'<span class="stat"><i class="dot-s{" gap" if gap else ""}"></i>'
+                   f'宏观 {cov.get("with_value", "—")}/{cov.get("total_cards", "—")} 已覆盖</span>')
+    st = as_dict((news or {}).get("stats"))
+    if st:
+        out.append(f'<span class="stat"><i class="dot-s"></i>'
+                   f'新闻 A{st.get("A", 0)} · B{st.get("B", 0)} · C{st.get("C", 0)}</span>')
+    out.append('</div>')
+    return out
+
+
+def render_macro(macro):
+    inds = as_list(macro.get("indicators"))
+    cov = as_dict(macro.get("coverage"))
+    out = ['<section class="card sec-toggle"><details><summary>'
+           f'<h2>宏观环境 · {len(inds)} 项</h2>'
+           f'<span class="hint">{cov.get("with_value", "—")}/{cov.get("total_cards", "—")} 已覆盖 · 点击展开</span>'
+           '</summary><div class="collapse-body"><div class="macro-grid">']
+    for ind in inds:
+        ind = as_dict(ind)
+        ok = ind.get("status") == "ok"
+        us = ind.get("region") == "US"
+        out.append(f'<div class="macro-card{" uncovered" if not ok else ""}">')
+        out.append(f'<div class="macro-top"><span class="macro-region{" us" if us else ""}">'
+                   f'{"美国" if us else "中国"}</span>'
+                   f'<span class="macro-nm">{esc(ind.get("name", ""))}</span></div>')
+        if ok:
+            out.append(f'<div class="macro-val">{fmt_macro(ind.get("value"))}'
+                       f'<span class="u">{esc(ind.get("unit") or "")}</span></div>')
+        else:
+            out.append('<div class="macro-val">未覆盖</div>')
+        out.append(f'<div class="macro-ind">{esc(ind.get("indicator_name") or ind.get("reason") or "—")}</div>')
+        if ok:
+            out.append(f'<div class="macro-meta"><span>截至 {esc(ind.get("period") or "—")}</span>'
+                       f'<span>公布 {esc(ind.get("published") or "—")}</span></div>')
+            fc, val = ind.get("forecast"), ind.get("value")
+            if isinstance(fc, (int, float)) and isinstance(val, (int, float)):
+                d = val - fc
+                word = "高于" if d > 0 else ("低于" if d < 0 else "持平")
+                tail = "" if abs(d) < 1e-9 else " " + fmt_macro(abs(d))
+                out.append(f'<div class="macro-gap">实际 {fmt_macro(val)} vs 预期 {fmt_macro(fc)}　'
+                           f'{word}{tail}</div>')
+        out.append('</div>')
+    out.append('</div>')
+    out.append('<div class="macro-legend">'
+               '<span>中国为「当期值 + 同比」，美国为「实际 / 预期 / 前值」，频率亦不同——'
+               '只并排看方向，不画同一条曲线、不算差值</span>'
+               '<span>数据期与披露日分列，不拿旧值冒充当期值</span>'
+               '<span>预期值接口未返回时留空，不填 0</span></div>')
+    out.append(f'<div class="src">来源 {esc(macro.get("source", "—"))}；取数 {esc(macro.get("as_of", "—"))}；'
+               f'指标定义 config/macro.yaml。{esc(cov.get("cn_us_note", ""))}</div>')
+    out.append('</div></details></section>')
+    return out
+
+
+def render_news(news):
+    items = as_list(news.get("items"))
+    win = news.get("window_hours", 48)
+    try:
+        cutoff = datetime.fromisoformat(str(news.get("as_of"))).timestamp() - win * 3600
+    except (TypeError, ValueError):
+        cutoff = 0
+    live = [as_dict(i) for i in items if (as_dict(i).get("publish_time") or 0) >= cutoff]
+    groups = {t: [i for i in live if i.get("tier") == t] for t in ("A", "B", "C")}
+
+    def row(i, tier):
+        url = i.get("url") or ""
+        title = esc(i.get("title", ""))
+        head = f'<a href="{esc(url)}" target="_blank" rel="noopener">{title}</a>' if url else title
+        bits = [f'<span>{esc(i.get("source_media") or "—")}</span>',
+                f'<span class="mono">{fmt_ts(i.get("publish_time"))}</span>']
+        if i.get("owner"):
+            bits.append(f'<span class="mono">{esc(i["owner"])}</span>')
+        if i.get("matched_term"):
+            bits.append(f'<span class="news-tag">命中「{esc(i["matched_term"])}」</span>')
+        return (f'<div class="news-item {tier.lower()}"><div class="bar"></div>'
+                f'<div><div class="news-title">{head}</div>'
+                f'<div class="news-meta">{"".join(bits)}</div></div></div>')
+
+    out = ['<section class="card"><div class="card-head">'
+           '<h2>行业新闻 · 只看跟自己有关的</h2>'
+           f'<span class="hint">{win} 小时窗口 · 语义检索结果已本地复检</span></div>']
+    for key, label in (("A", "个股相关"), ("B", "细分行业")):
+        pool = groups[key]
+        out.append(f'<div class="news-group"><div class="news-group-h">{label} · {key} 类 · {len(pool)} 条</div>')
+        if pool:
+            out.extend(row(i, key.lower()) for i in pool)
+        else:
+            out.append('<div class="news-empty">本轮无命中。宁可空着，也不放宽词表凑数。</div>')
+        out.append('</div>')
+    if groups["C"]:
+        out.append(f'<details><summary>板块与背景 · C 类 · {len(groups["C"])} 条（已折叠，避免刷屏）'
+                   '</summary><div class="detail-body">')
+        out.extend(row(i, "c") for i in groups["C"])
+        out.append('</div></details>')
+    ex = as_list(news.get("excluded"))
+    if ex:
+        out.append(f'<details><summary>本轮过滤掉 {len(ex)} 条（点开看理由）</summary><div class="detail-body">')
+        for e in ex:
+            e = as_dict(e)
+            out.append(f'· {esc(e.get("title", ""))}<br>'
+                       f'<span style="color:var(--text-3)">{esc(e.get("reason", ""))}</span><br>')
+        out.append('</div></details>')
+    out.append(f'<div class="src">来源 {esc(news.get("source", "—"))}；取数 {esc(news.get("as_of", "—"))}；'
+               f'词表 config/industry-topics.yaml。只给标题、来源、时间与命中词，'
+               '不摘录正文、不展示研报结论、不判断利好利空。</div>')
+    out.append('</section>')
+    return out
+
+
 def build(root: Path) -> str:
     P = instance_paths(root)
     inst = load_yaml(P["config"] / "instance.yaml")
@@ -338,6 +548,14 @@ def build(root: Path) -> str:
     as_of = snap["quotes"].get("as_of", "—")
     health = load_json(P["state"] / "source-health.json")
     dedupe = load_json(P["state"] / "dedupe.json")
+
+    # Optional modules: resolved independently from the quotes snapshot, because
+    # macro/news are produced on a different cadence. Missing -> card not rendered.
+    macro_dir = latest_snapshot_with(root, "macro.json")
+    news_dir = latest_snapshot_with(root, "news.json")
+    macro_snap = load_json(macro_dir / "macro.json") if macro_dir else None
+    news_snap = load_json(news_dir / "news.json") if news_dir else None
+    snap_date = qdir.name
 
     codes = as_list(wl.get("codes"))
     bands = as_dict(bb.get("bands"))
@@ -382,6 +600,10 @@ def build(root: Path) -> str:
                  '<div class="hint" style="margin-top:4px">跳过录入步骤时自动生成；切换到 live 模式会强制清空演示数据并要求二次确认。</div>'
                  '</div></div>')
 
+    # ---------- macro env bar (optional) ----------
+    if macro_snap or news_snap:
+        h.extend(render_env_bar(macro_snap, news_snap, snap_date))
+
     # ---------- hero ----------
     h.append('<section class="card hero">')
     h.append(f'<div class="eyebrow">账户总资产 · {esc(display_ccy)}</div>')
@@ -414,6 +636,10 @@ def build(root: Path) -> str:
              '<b>摊薄成本只改变账面数字，不改善盈利能力</b>。'
              '请先在交易日记写下买入理由与失效条件。</div></div>')
     h.append('</section>')
+
+    # ---------- macro panel (optional, collapsed) ----------
+    if macro_snap:
+        h.extend(render_macro(macro_snap))
 
     # ---------- holdings + averaging-down calculator ----------
     h.append('<section class="card"><div class="card-head"><h2>持仓与补仓摊薄</h2>'
@@ -541,8 +767,13 @@ def build(root: Path) -> str:
     # ---------- dividends + nav progress + events ----------
     h.append('<div class="grid g2">')
     div = snap["dividends"]
-    h.append('<section class="card"><div class="card-head"><h2>分红日历</h2>'
-             '<span class="hint">仅已实施派息，不虚构未来除权日</span></div>')
+    # ---------- industry news (optional) ----------
+    if news_snap:
+        h.extend(render_news(news_snap))
+
+    h.append('<section class="card sec-toggle"><details><summary><h2>分红日历</h2>'
+             '<span class="hint">仅已实施派息，不虚构未来除权日 · 点击展开</span></summary>'
+             '<div class="collapse-body">')
     plans = as_list(div.get("plans"))
     if plans:
         h.append('<table><thead><tr><th>标的</th><th>除权日</th><th class="num">每股派息</th>'
@@ -561,10 +792,12 @@ def build(root: Path) -> str:
         h.append(f'<div class="src">未覆盖：{esc("、".join(str(x) for x in not_cov))}。'
                  '接口无返回时标未覆盖，不假装全都有。</div>')
     h.append('<div class="src">检测到新 ex_date 会自动重算该股买入区间；'
-             '双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div></section>')
+             '双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div>'
+             '</div></details></section>')
 
-    h.append('<section class="card"><div class="card-head"><h2>收益曲线 · 数据积累中</h2>'
-             '<span class="hint">不足 10 个交易日不画曲线</span></div>')
+    h.append('<section class="card sec-toggle"><details><summary><h2>收益曲线 · 数据积累中</h2>'
+             '<span class="hint">不足 10 个交易日不画曲线 · 点击展开</span></summary>'
+             '<div class="collapse-body">')
     nav_dirs = [p for p in (root / "data").glob("*/*") if p.is_dir() and (p / "nav.json").is_file()]
     n_nav = len(nav_dirs)
     pctv = min(100, n_nav / 10 * 100)
@@ -579,7 +812,7 @@ def build(root: Path) -> str:
     h.append('<div class="event-row"><span>财报速递</span><span class="mono">0 条</span></div>')
     hist = as_list(health.get("history"))
     h.append(f'<div class="event-row"><span>数据源自检</span><span class="mono">{len(hist)} 次</span></div>')
-    h.append('</section></div>')
+    h.append('</div></details></section></div>')
 
     # ---------- journal + change request (interaction A) ----------
     h.append('<div class="grid g2">')
