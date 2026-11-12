@@ -53,6 +53,8 @@ hosts.yml
 *.jpg
 *.jpeg
 *.png
+# 唯一例外：README 用图，必须是 demo 实例截图（虚构数据），见 docs/screenshots.md
+!docs/screenshots/*.png
 *.gif
 *.pdf
 *.csv

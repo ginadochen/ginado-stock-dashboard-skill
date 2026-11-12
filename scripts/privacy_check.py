@@ -139,6 +139,7 @@ def main() -> None:
 
     all_hits = []
     binaries = []
+    allowed_images = []
     for p in sorted(root.rglob("*")):
         if not p.is_file():
             continue
@@ -147,7 +148,12 @@ def main() -> None:
         if any(x in SKIP_DIRS for x in parts[:-1]):
             continue
         if p.suffix.lower() in BINARY_RED:
-            binaries.append(rel)
+            # 唯一豁免：README 用图，只接受由 demo 实例截图生成、且放在固定目录下的文件。
+            # 真实持仓截图永远不允许进仓库——那里面有金额和成本。
+            if rel.startswith("docs/screenshots/") and p.suffix.lower() == ".png":
+                allowed_images.append(rel)
+            else:
+                binaries.append(rel)
             continue
         if should_scan(p, root):
             all_hits.extend(scan_file(p, root))
@@ -158,7 +164,8 @@ def main() -> None:
         all_hits = [h for h in all_hits if h[0] in {"token", "private-key", "hosts-file"}]
 
     if binaries:
-        print(f"FAIL: {len(binaries)} binary/image file(s) present (screenshots must never be committed):")
+        print(f"FAIL: {len(binaries)} binary/image file(s) present outside docs/screenshots/ "
+              f"(real account screenshots must never be committed):")
         for b in binaries[:10]:
             print(f"  {b}")
         sys.exit(1)
@@ -171,7 +178,12 @@ def main() -> None:
             print(f"  ... and {len(all_hits) - 40} more")
         sys.exit(1)
 
-    print(f"privacy scan OK ({args.scope}): 0 hits, no binary/image files")
+    tail = f", {len(allowed_images)} demo screenshot(s)" if allowed_images else ", no binary/image files"
+    print(f"privacy scan OK ({args.scope}): 0 hits{tail}")
+    if allowed_images:
+        print("  需人工确认以上均为 demo 实例截图，不含真实持仓金额：")
+        for a in allowed_images:
+            print(f"    {a}")
     if args.strict:
         sys.exit(0)
 

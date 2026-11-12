@@ -22,6 +22,7 @@ All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 - `example/index.html` 重建，包含两个新模块的演示形态
 - 仓库更名为 `ginado-stock-dashboard-skill`（GitHub 对旧地址保留重定向，已 clone 的本地副本只需 `git remote set-url`）
 - README 重写：按六项主要功能逐条展开，新增「需要添加的连接器」一节（腾讯自选股主源 / Wind 校准源 / 企业微信推送通道），删掉原有的问题对照表与冗长清单
+- README 增加「界面」一节，6 张截图放在 `docs/screenshots/`，全部取自 demo 实例（虚构数据）。`privacy_check.py` 与 `.gitignore` 相应放行该目录，其他任何路径的图片仍然判 FAIL，规则见 `docs/screenshots.md`
 
 ## [0.1.0] - 2026-11-11
 

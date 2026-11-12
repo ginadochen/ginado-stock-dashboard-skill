@@ -15,6 +15,34 @@
 5. 自动监控中美两国重要宏观环境指标数据
 6. 定时更新自选标的所在行业的重要新闻
 
+## 界面
+
+首页
+
+![首页](docs/screenshots/01-home.png)
+
+持仓与补仓摊薄
+
+![持仓与补仓摊薄](docs/screenshots/02-holding.png)
+
+观察池价格带与 52 周价格位置
+
+![观察池与价格位置](docs/screenshots/03-bands.png)
+
+财报详情页
+
+![财报详情页](docs/screenshots/06-earnings.png)
+
+宏观环境
+
+![宏观环境](docs/screenshots/05-macro.png)
+
+行业新闻
+
+![行业新闻](docs/screenshots/04-news.png)
+
+以上截图全部取自 `example/` 的 demo 实例，数据是虚构的。
+
 ## 说明
 
 需要添加 Wind、腾讯自选股、企业微信的连接器。

@@ -12,7 +12,7 @@
 |---|---|---|---|
 | 1 | 仓库从零创建，首次提交即干净 | 新建独立目录，只复制白名单文件；**不在生产实例里 `git init`** | ✅ 通过（本仓库为新建目录，无历史） |
 | 2 | 默认拒绝式忽略规则 | `.gitignore` 首行 `*`，仅 `!` 放行白名单；`git check-ignore -q` 抽查 13 个路径 | ✅ 通过：7 个白名单文件可提交，`config.yaml` / `secret.jpg` / `data/` / `.sandbox/` / `dist/` / `__pycache__` 全部被忽略 |
-| 3 | 敏感信息扫描 0 命中 | `python scripts/privacy_check.py --root . --strict` | ✅ 通过：0 命中，无二进制/图片文件 |
+| 3 | 敏感信息扫描 0 命中 | `python scripts/privacy_check.py --root . --strict` | ✅ 通过：0 命中；图片仅 `docs/screenshots/` 下的 6 张 demo 截图，逐条打印复核 |
 | 4 | 模板无硬编码 | 扫描 `assets/templates/` 与 `references/` 中的金额、邮箱、绝对路径、token、UUID | ✅ 通过：0 命中 |
 | 5 | 脚本无路径推断 | 扫描 `scripts/*.py` 中 `Path(__file__).parent.parent` 与硬编码盘符 | ✅ 通过：全部脚本以 `--root` 显式接收实例目录 |
 | 6 | 演示数据虚构且可识别 | 所有 demo 快照 `source: demo-fixture`；金额明显整圆；无真实标的组合 | ✅ 通过：6 只演示标的与生产观察池及同业清单零重叠 |
@@ -40,10 +40,12 @@
 - token 前缀：`ghp_` / `github_pat_` / `gho_` / `ghs_` / `ghr_` / `github_pat_11`
 - 邮箱（含 noreply）、手机号、IPv4
 - 私钥头 `-----BEGIN ... PRIVATE KEY-----`
-- 图片/截图二进制文件
+- 图片/截图二进制文件（唯一例外见下）
 - **私有观察池的标的组合**（可选）：单个证券代码是公开信息，但一组代码的组合能反推个人偏好。本仓库**不硬编码任何人的标的清单**；用 `--codes A,B,C` 或环境变量 `PRIVACY_WATCH_CODES` 在扫描时动态注入，规则仅在传入 ≥3 个代码时启用
 
-允许项：`assets/demo/` 中的虚构数值（带 `demo-fixture` 标记）、`example/` 成品、LICENSE/NOTICE 中的年份与署名、CI 配置里的版本号。
+允许项：`assets/demo/` 中的虚构数值（带 `demo-fixture` 标记）、`example/` 成品、`docs/screenshots/` 下的 demo 截图、LICENSE/NOTICE 中的年份与署名、CI 配置里的版本号。
+
+> **图片唯一例外（2026-11-12 起）**：README 需要成品图，因此放行 `docs/screenshots/*.png`。约束是只能由 demo 实例（虚构数据）截图生成，其他路径的图片仍然判 FAIL，规则细节见 [screenshots.md](screenshots.md)。扫描器会把放行的文件逐条打印，便于人工复核。
 
 ## 已知边界
 
