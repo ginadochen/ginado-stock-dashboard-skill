@@ -64,6 +64,7 @@ python scripts/privacy_check.py --root . --strict --codes CODE1,CODE2,CODE3
 ## 发布记录
 
 - **2026-11-11 首次公开发布**：`github.com/ginadochen/stock-dashboard-skill`（public）。46 个文件、2 条提交，作者与提交者均为项目署名 ID；`git log --all -p` 全文检索无敏感值。
+- **2026-11-12 仓库更名为** `github.com/ginadochen/ginado-stock-dashboard-skill`。GitHub 对旧地址保留重定向；仓库内容、提交历史、可见性（public）均未变动，未涉及任何文件级隐私影响。
 - 发布方式：本地干净 git 历史 + GitHub REST API 校验，未从生产实例复制任何文件、未在生产实例内初始化仓库。
 - 全局 git 身份（含真实姓名与个人邮箱）未被改动；本仓库使用**仓库级**署名覆盖。
 - **CI 未启用**：发布凭据缺少 `workflow` scope，而 GitHub 对 `.github/workflows/` 目录下**任何**文件（含 `.example` 后缀）都要求该 scope。CI 模板以 `docs/verify.yml.example` 保留，启用方式见 README。

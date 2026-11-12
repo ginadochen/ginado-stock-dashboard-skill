@@ -1,4 +1,4 @@
-# stock-dashboard-skill
+# ginado-stock-dashboard-skill
 
 **一个能帮你把「关注的股票 + 自己的持仓」变成本地看板的 Skill。**
 
@@ -37,8 +37,8 @@
 只需要 **Python 3.9+**，无第三方依赖、不需要网络：
 
 ```bash
-git clone https://github.com/ginadochen/stock-dashboard-skill.git
-cd stock-dashboard-skill
+git clone https://github.com/ginadochen/ginado-stock-dashboard-skill.git
+cd ginado-stock-dashboard-skill
 
 python scripts/instance.py        --root ../my-demo --mode demo
 python scripts/build_dashboard.py --root ../my-demo
