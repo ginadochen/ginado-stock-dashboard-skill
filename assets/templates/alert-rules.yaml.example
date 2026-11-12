@@ -3,6 +3,8 @@ as_of: {{AS_OF}}
 trigger_mode: single-hour-rules
 schedule_note: 只在开盘时段跑；多条单整点规则，禁用 HOURLY 全天轮询
 check_hours: {{CHECK_HOURS}}
+news_hours: {{NEWS_HOURS}}
+news_hours_note: 行业新闻只在这几个整点抓，其余整点跳过；不新增任务，挂进已有整点里
 report_check: {{REPORT_CHECK}}
 holiday_rule: 任务内用交易日历判断，非交易日静默退出，不取数不推送
 market_calendars:

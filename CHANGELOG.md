@@ -23,6 +23,7 @@ All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 - 仓库更名为 `ginado-stock-dashboard-skill`（GitHub 对旧地址保留重定向，已 clone 的本地副本只需 `git remote set-url`）
 - README 重写：按六项主要功能逐条展开，新增「需要添加的连接器」一节（腾讯自选股主源 / Wind 校准源 / 企业微信推送通道），删掉原有的问题对照表与冗长清单
 - README 增加「界面」一节，6 张截图放在 `docs/screenshots/`，全部取自 demo 实例（虚构数据）。`privacy_check.py` 与 `.gitignore` 相应放行该目录，其他任何路径的图片仍然判 FAIL，规则见 `docs/screenshots.md`
+- **补齐宏观与新闻的定时任务模板**：`references/automation-prompts.md` 之前只有「财报监控」和「盘中价格检查」两个模板，装着 skill 的人建了任务也不会去取宏观和新闻，两块永远空着。现在模板 A（09:30）加了宏观取数与日历提醒（第 14–16 步），模板 B（盘中）加了行业新闻取数（第 9 步，仅 `news_hours` 那两条整点执行）。不新增任务、不改调度节奏；没启用可选模块时要求整段删掉而不是留空步骤。`alert-rules.yaml.example` 相应新增 `news_hours` 字段，`instance.py` 补对应占位符默认值
 
 ## [0.1.0] - 2026-11-11
 
