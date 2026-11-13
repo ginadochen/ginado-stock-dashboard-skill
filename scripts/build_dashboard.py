@@ -835,9 +835,8 @@ def build(root: Path) -> str:
     if news_snap:
         h.extend(render_news(news_snap))
 
-    h.append('<section class="card sec-toggle"><details><summary><h2>分红日历</h2>'
-             '<span class="hint">仅已实施派息，不虚构未来除权日 · 点击展开</span></summary>'
-             '<div class="collapse-body">')
+    h.append('<section class="card"><div class="card-head"><h2>分红日历</h2>'
+             '<span class="hint">仅已实施派息，不虚构未来除权日</span></div>')
     plans = as_list(div.get("plans"))
     if plans:
         h.append('<table><thead><tr><th>标的</th><th>除权日</th><th class="num">每股派息</th>'
@@ -857,11 +856,10 @@ def build(root: Path) -> str:
                  '接口无返回时标未覆盖，不假装全都有。</div>')
     h.append('<div class="src">检测到新 ex_date 会自动重算该股买入区间；'
              '双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div>'
-             '</div></details></section>')
+             '</section>')
 
-    h.append('<section class="card sec-toggle"><details><summary><h2>收益曲线 · 数据积累中</h2>'
-             '<span class="hint">不足 10 个交易日不画曲线 · 点击展开</span></summary>'
-             '<div class="collapse-body">')
+    h.append('<section class="card"><div class="card-head"><h2>收益曲线 · 数据积累中</h2>'
+             '<span class="hint">不足 10 个交易日不画曲线</span></div>')
     nav_dirs = [p for p in (root / "data").glob("*/*") if p.is_dir() and (p / "nav.json").is_file()]
     n_nav = len(nav_dirs)
     pctv = min(100, n_nav / 10 * 100)
@@ -876,7 +874,7 @@ def build(root: Path) -> str:
     h.append('<div class="event-row"><span>财报速递</span><span class="mono">0 条</span></div>')
     hist = as_list(health.get("history"))
     h.append(f'<div class="event-row"><span>数据源自检</span><span class="mono">{len(hist)} 次</span></div>')
-    h.append('</div></details></section></div>')
+    h.append('</section></div>')
 
     # ---------- journal + change request (interaction A) ----------
     h.append('<div class="grid g2">')

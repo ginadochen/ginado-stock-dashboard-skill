@@ -17,13 +17,15 @@ README 需要展示成品，所以开了这一处例外，条件是：
 ## 怎么重新生成
 
 ```bash
-# 1. 先确保 example/ 是最新的 demo 产物
+# 1. 先确保 example/ 是最新的 demo 产物（example 镜像实例根：dashboard/ + reports/）
 python scripts/instance.py        --root ../shot --mode demo
 python scripts/build_dashboard.py --root ../shot
 python scripts/build_stock_pages.py --root ../shot
+# 报告页不由本包生成，example/reports/ 下放的是预渲染的虚构示例
+```
 
 # 2. 用无头浏览器按区块截图（1400 宽视口，deviceScaleFactor=2，最后缩到 1400 宽）
-#    截图后放到 docs/screenshots/，文件名用 01- 到 06- 的前缀
+#    截图后放到 docs/screenshots/，文件名用 01- 到 08- 的前缀
 ```
 
 不要截 `live` 模式的页面，也不要用自己的真实实例页面临时替换后再截图。

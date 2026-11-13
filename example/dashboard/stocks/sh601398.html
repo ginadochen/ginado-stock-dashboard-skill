@@ -45,6 +45,39 @@ h1{font-size:22px;margin:0}h2{font-size:16px;margin:0}h3{font-size:13px;margin:0
 .conclusion{padding:14px 16px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);font-size:13.5px;line-height:1.85}
 .conclusion b{color:var(--accent)}
+.research-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+  padding:7px 12px;border-radius:9px;text-decoration:none;color:var(--accent);
+  border:1px solid rgba(91,156,255,.45);background:rgba(91,156,255,.12)}
+.research-btn:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.2)}
+.research-btn .rb-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;opacity:.7;
+  border-left:1px solid rgba(91,156,255,.4);padding-left:7px}
+.research-strip{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:13px;
+  padding:11px 14px;border-radius:10px;text-decoration:none;
+  border:1px solid rgba(91,156,255,.35);background:rgba(91,156,255,.09)}
+.research-strip:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.16)}
+.research-strip .rs-kicker{font-size:10.5px;letter-spacing:.05em;color:var(--accent);
+  font-weight:600;white-space:nowrap}
+.research-strip .rs-title{flex:1;min-width:170px;font-size:12.5px;color:var(--text)}
+.research-strip .rs-count{font-size:11px;color:var(--text-2);white-space:nowrap}
+.research-strip .rs-go{font-size:11.5px;color:var(--accent);white-space:nowrap;
+  border-left:1px solid rgba(91,156,255,.3);padding-left:12px}
+.rstat{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;
+  border:1px dashed var(--border);background:var(--panel-2);color:var(--text-3);white-space:nowrap}
+.rstat.confirmed{color:var(--accent);border-style:solid;border-color:rgba(91,156,255,.4);
+  background:rgba(91,156,255,.1)}
+.rstat.refuted{color:var(--warn);border-style:solid;border-color:rgba(240,169,75,.4);
+  background:rgba(240,169,75,.1)}
+.rstat.partial{color:var(--text-2);border-style:dashed}
+.rcheck{border-bottom:1px solid var(--border);padding:12px 0 11px}
+.rcheck:last-child{border-bottom:0}
+.rcheck-head{display:flex;gap:10px;align-items:flex-start}
+.rcheck-id{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:22px;padding-top:3px}
+.rcheck-claim{flex:1;font-size:13px;line-height:1.65}
+.rcheck-meta{font-size:11px;color:var(--text-3);line-height:1.8;margin-top:5px;padding-left:32px}
+.rcheck-meta b{color:var(--text-2);font-weight:500;margin-right:4px}
+.rcheck-ev{font-size:11px;color:var(--accent);margin-top:3px;padding-left:32px}
+.research-src{font-size:11px;color:var(--text-3);line-height:1.8;margin:12px 0 0}
+.research-src b{color:var(--text-2);font-weight:500}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
 .kpi-cell{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
 .kpi-cell .k{font-size:11px;color:var(--text-3)}
@@ -74,7 +107,8 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 .foot{margin-top:24px;padding-top:15px;border-top:1px solid var(--border);
   font-size:11.5px;color:var(--text-3);line-height:1.8}
 </style></head><body><div class="wrap">
-<div class="top"><div><a class="back-link" href="../index.html" onclick="if(document.referrer && document.referrer.indexOf('index.html')>=0){history.back();return false;}">← 返回看板</a></div><button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div>
+<div class="top"><div><a class="back-link" href="../index.html" onclick="if(document.referrer && document.referrer.indexOf('index.html')>=0){history.back();return false;}">← 返回看板</a></div><div style="display:flex;gap:9px;align-items:center">
+<button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div></div>
 <div class="banner"><b>DEMO · 演示数据</b>　本页所有财务数字、行情与公告均为<b>完全虚构</b>的示例值，与任何真实公司财报无关。</div>
 <section class="card"><h1>示例银行 <span class="hint mono">sh601398</span></h1>
 <div class="meta">
@@ -156,6 +190,7 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 <div class="notice warn"><b>无可靠一致预期</b>　平台测算值，机构数为 0，非一手机构一致预期，需核实原文。本页不做超预期/不及预期的硬判定。</div>
 <div class="src">若有一手预期，实际 vs 预测方向可在此展示；缺失时如实写「无可靠一致预期」。</div></section>
 </div>
+<section class="card"><div class="card-head"><h2>研究结论对账</h2><span class="hint">未覆盖</span></div><div class="research-src">尚未安排深度研究。只在存在待决的单一问题时才写，不为覆盖而覆盖——无报告的标的显式标注，不静默留空。格式见 references/research-contract.md。</div><div class="src">已覆盖：示例银行-H（hk00005）。</div></section>
 <section class="card"><div class="card-head"><h2>公告溯源</h2><span class="hint">按时间倒序，精确到秒</span></div>
 <div style="overflow-x:auto"><table><thead><tr><th>时间</th><th>标题</th><th>类型</th></tr></thead><tbody>
 <tr><td class="mono hint">2025-10-30 17:30:00</td><td>示例银行 2025 年第三季度报告（虚构）</td><td>report</td></tr>
@@ -173,7 +208,7 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 <details><summary>图表规范</summary><div class="detail-body">分组柱状图使用真实金额与 0 线，亏损向下；柱端数值常显并按量级自适应精度、逐个防重叠避让；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28；窄屏可横向滚动，不靠缩小字号硬塞；悬停只作精度补充。</div></details>
 </section>
 <div class="foot">
-<div class="src">财报快照：demo-fixture （2026-01-05）；行情估值：2026-01-05；构建时间：2026-11-13T10:17:18+08:00。固定路径 dashboard/stocks/sh601398.html，覆盖更新不改名。</div>
+<div class="src">财报快照：demo-fixture （2026-01-05）；行情估值：2026-01-05；构建时间：2026-11-13T19:12:04+08:00。固定路径 dashboard/stocks/sh601398.html，覆盖更新不改名。</div>
 <div>本页面全部为<b>虚构演示数据</b>。</div>
 <div style="margin-top:8px">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</div>
 </div></div>

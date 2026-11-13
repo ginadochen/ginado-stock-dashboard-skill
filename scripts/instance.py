@@ -339,6 +339,10 @@ def main() -> None:
         "sources": {"primary": {"status": "unknown"}, "calibration": {"status": "unknown"}},
         "history": [],
     })
+    # Optional module: research check state. Empty until a report exists under reports/.
+    write_json(state / "research-checks.json", {
+        "source": "initial", "as_of": now_iso(), "checks": {},
+    })
 
     if args.mode == "demo":
         snap = root / "data" / DEMO_DATE[:7] / DEMO_DATE
@@ -350,6 +354,21 @@ def main() -> None:
             "source": "demo-fixture", "as_of": DEMO_DATE,
             "note": "all numbers in this instance are fictional",
         })
+        # Optional research module: a fictional report + its check state, so the
+        # per-stock page has something to reconcile against. Dropping the file
+        # from reports/ removes the whole card again.
+        res_src = DEMO / "research"
+        if res_src.is_dir():
+            rep = root / "reports" / DEMO_DATE[:7]
+            rep.mkdir(parents=True, exist_ok=True)
+            # .md is the source of truth; the pre-rendered .html is a demo
+            # stand-in so the cross-directory link actually resolves. This
+            # package does not render reports -- see references/research-contract.md.
+            for f in sorted(res_src.glob("*.md")) + sorted(res_src.glob("*.html")):
+                shutil.copyfile(f, rep / f.name)
+            checks = res_src / "research-checks.json"
+            if checks.is_file():
+                shutil.copyfile(checks, state / "research-checks.json")
 
     print(f"instance created: {root}")
     print(f"mode: {args.mode}")

@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>示例银行-H · 财报详情</title><style>
+<title>示例白酒 · 财报详情</title><style>
 :root{
   --bg:#0f141c; --panel:#182130; --panel-2:#1d2737; --border:#2a3648;
   --text:#e8eef7; --text-2:#aab8cc; --text-3:#7d8ca3;
@@ -45,6 +45,39 @@ h1{font-size:22px;margin:0}h2{font-size:16px;margin:0}h3{font-size:13px;margin:0
 .conclusion{padding:14px 16px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);font-size:13.5px;line-height:1.85}
 .conclusion b{color:var(--accent)}
+.research-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+  padding:7px 12px;border-radius:9px;text-decoration:none;color:var(--accent);
+  border:1px solid rgba(91,156,255,.45);background:rgba(91,156,255,.12)}
+.research-btn:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.2)}
+.research-btn .rb-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;opacity:.7;
+  border-left:1px solid rgba(91,156,255,.4);padding-left:7px}
+.research-strip{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:13px;
+  padding:11px 14px;border-radius:10px;text-decoration:none;
+  border:1px solid rgba(91,156,255,.35);background:rgba(91,156,255,.09)}
+.research-strip:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.16)}
+.research-strip .rs-kicker{font-size:10.5px;letter-spacing:.05em;color:var(--accent);
+  font-weight:600;white-space:nowrap}
+.research-strip .rs-title{flex:1;min-width:170px;font-size:12.5px;color:var(--text)}
+.research-strip .rs-count{font-size:11px;color:var(--text-2);white-space:nowrap}
+.research-strip .rs-go{font-size:11.5px;color:var(--accent);white-space:nowrap;
+  border-left:1px solid rgba(91,156,255,.3);padding-left:12px}
+.rstat{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;
+  border:1px dashed var(--border);background:var(--panel-2);color:var(--text-3);white-space:nowrap}
+.rstat.confirmed{color:var(--accent);border-style:solid;border-color:rgba(91,156,255,.4);
+  background:rgba(91,156,255,.1)}
+.rstat.refuted{color:var(--warn);border-style:solid;border-color:rgba(240,169,75,.4);
+  background:rgba(240,169,75,.1)}
+.rstat.partial{color:var(--text-2);border-style:dashed}
+.rcheck{border-bottom:1px solid var(--border);padding:12px 0 11px}
+.rcheck:last-child{border-bottom:0}
+.rcheck-head{display:flex;gap:10px;align-items:flex-start}
+.rcheck-id{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:22px;padding-top:3px}
+.rcheck-claim{flex:1;font-size:13px;line-height:1.65}
+.rcheck-meta{font-size:11px;color:var(--text-3);line-height:1.8;margin-top:5px;padding-left:32px}
+.rcheck-meta b{color:var(--text-2);font-weight:500;margin-right:4px}
+.rcheck-ev{font-size:11px;color:var(--accent);margin-top:3px;padding-left:32px}
+.research-src{font-size:11px;color:var(--text-3);line-height:1.8;margin:12px 0 0}
+.research-src b{color:var(--text-2);font-weight:500}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
 .kpi-cell{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
 .kpi-cell .k{font-size:11px;color:var(--text-3)}
@@ -74,77 +107,81 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 .foot{margin-top:24px;padding-top:15px;border-top:1px solid var(--border);
   font-size:11.5px;color:var(--text-3);line-height:1.8}
 </style></head><body><div class="wrap">
-<div class="top"><div><a class="back-link" href="../index.html" onclick="if(document.referrer && document.referrer.indexOf('index.html')>=0){history.back();return false;}">← 返回看板</a></div><button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div>
+<div class="top"><div><a class="back-link" href="../index.html" onclick="if(document.referrer && document.referrer.indexOf('index.html')>=0){history.back();return false;}">← 返回看板</a></div><div style="display:flex;gap:9px;align-items:center">
+<button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div></div>
 <div class="banner"><b>DEMO · 演示数据</b>　本页所有财务数字、行情与公告均为<b>完全虚构</b>的示例值，与任何真实公司财报无关。</div>
-<section class="card"><h1>示例银行-H <span class="hint mono">hk00005</span></h1>
+<section class="card"><h1>示例白酒 <span class="hint mono">sh600519</span></h1>
 <div class="meta">
-<span class="chip">最新报告期 2025-06-30</span>
-<span class="chip">实际披露 2025-07-15</span>
-<span class="chip">财报币种 HKD</span>
+<span class="chip">最新报告期 2025-12-31</span>
+<span class="chip">实际披露 2025-13-15</span>
+<span class="chip">财报币种 CNY</span>
 <span class="chip">数据时点 2026-01-05</span>
 <span class="chip">行情时点 2026-01-05</span>
-<span class="chip warn">置信度 reference</span>
-<span class="chip">共 4 期</span>
+<span class="chip ">置信度 standard</span>
+<span class="chip">共 8 期</span>
 </div>
-<div class="src">财报记账本位币与股价交易币种分离；本页金额单位：亿元（本币）。跨市场只比比率与增速，不比绝对金额。 港股半年度；与 A 股 Q3 存在周期差，横比须按自然年季度对齐 财报数字是各报告期历史值，行情估值是快照时点值，两者分别标注，不把盘中价当收盘价。</div>
+<div class="src">财报记账本位币与股价交易币种分离；本页金额单位：亿元（本币）。跨市场只比比率与增速，不比绝对金额。 A 股自然季度 财报数字是各报告期历史值，行情估值是快照时点值，两者分别标注，不把盘中价当收盘价。</div>
 </section>
 <section class="card"><div class="card-head"><h2>一句话结论</h2><span class="hint">规则生成，非投资建议</span></div>
-<div class="conclusion"><b>机器判定，需人工确认</b>　示例银行-H 最新报告期 <b>2025-06-30</b>：营收同比 +2.80%、归母净利同比 +1.20%，整体持平。结论基于结构化财务数字与近 4 期趋势，不含管理层措辞与指引的语义对比（未覆盖）。当前区间置信度：<b>reference</b> —— 参考级 / 低置信度，需人工确认，不得作为决策依据。</div>
+<div class="conclusion"><b>机器判定，需人工确认</b>　示例白酒 最新报告期 <b>2025-12-31</b>：营收同比 +6.20%、归母净利同比 +3.80%，利润增速高于营收，边际改善。结论基于结构化财务数字与近 8 期趋势，不含管理层措辞与指引的语义对比（未覆盖）。当前区间置信度：<b>standard</b>。</div>
 </section>
-<section class="card"><div class="card-head"><h2>报告期切换 · 近 4 期</h2><span class="hint">切换即时更新数字卡与柱状图</span></div>
+<section class="card"><div class="card-head"><h2>报告期切换 · 近 8 期</h2><span class="hint">切换即时更新数字卡与柱状图</span></div>
 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
 <select id="period-select">
-<option value="0">2025-06-30 · H1</option>
-<option value="1">2024-12-31 · FY</option>
-<option value="2">2024-06-30 · H1</option>
-<option value="3">2023-12-31 · FY</option>
+<option value="0">2025-12-31 · FY</option>
+<option value="1">2025-09-30 · Q3</option>
+<option value="2">2025-06-30 · H1</option>
+<option value="3">2025-03-31 · FY</option>
+<option value="4">2024-12-31 · FY</option>
+<option value="5">2024-09-30 · Q3</option>
+<option value="6">2024-06-30 · H1</option>
+<option value="7">2024-03-31 · FY</option>
 </select>
-<span class="hint mono" id="period-label">2025-06-30</span></div>
+<span class="hint mono" id="period-label">2025-12-31</span></div>
 <div class="kpi-grid">
-<div class="kpi-cell"><div class="k">营业收入</div><div class="v " id="k-rev">702.00 亿</div></div>
-<div class="kpi-cell"><div class="k">归母净利</div><div class="v " id="k-np">83.50 亿</div></div>
-<div class="kpi-cell"><div class="k">营收同比</div><div class="v up" id="k-rev-yoy">2.80%</div></div>
-<div class="kpi-cell"><div class="k">净利同比</div><div class="v up" id="k-np-yoy">1.20%</div></div>
+<div class="kpi-cell"><div class="k">营业收入</div><div class="v " id="k-rev">638.00 亿</div></div>
+<div class="kpi-cell"><div class="k">归母净利</div><div class="v " id="k-np">81.50 亿</div></div>
+<div class="kpi-cell"><div class="k">营收同比</div><div class="v up" id="k-rev-yoy">6.20%</div></div>
+<div class="kpi-cell"><div class="k">净利同比</div><div class="v up" id="k-np-yoy">3.80%</div></div>
 </div>
-<div class="trend-wrap"><div class="eyebrow" style="margin-bottom:6px">近 4 期营收 / 归母净利（亿元 · HKD）</div><svg id="trend-svg" class="trend-svg" viewBox="0 0 620 224" role="img" aria-label="营收与归母净利分组柱状图"></svg><div class="legend"><span><i style="background:var(--accent)"></i>营业收入</span><span><i style="background:var(--warn)"></i>归母净利</span><span><i style="background:var(--accent);opacity:.25"></i>当前报告期</span></div><div class="src"><b>柱端直接标注金额</b>（按量级自适应精度，悬停仅补充完整日期与 2 位小数原值）；纵轴为绝对金额（亿元 · 本页财报币种），亏损期柱体向下延伸；横轴每个刻度对应一个报告期（月份），下方短线按所属年份分组。净利柱明显矮于营收柱是真实量级差，不是绘图误差；A 股 CNY 与港股 HKD 不比绝对金额。</div></div>
+<div class="trend-wrap"><div class="eyebrow" style="margin-bottom:6px">近 8 期营收 / 归母净利（亿元 · CNY）</div><svg id="trend-svg" class="trend-svg" viewBox="0 0 620 224" role="img" aria-label="营收与归母净利分组柱状图"></svg><div class="legend"><span><i style="background:var(--accent)"></i>营业收入</span><span><i style="background:var(--warn)"></i>归母净利</span><span><i style="background:var(--accent);opacity:.25"></i>当前报告期</span></div><div class="src"><b>柱端直接标注金额</b>（按量级自适应精度，悬停仅补充完整日期与 2 位小数原值）；纵轴为绝对金额（亿元 · 本页财报币种），亏损期柱体向下延伸；横轴每个刻度对应一个报告期（月份），下方短线按所属年份分组。净利柱明显矮于营收柱是真实量级差，不是绘图误差；A 股 CNY 与港股 HKD 不比绝对金额。</div></div>
 </section>
 <section class="card"><div class="card-head"><h2>四层对比与盈利质量</h2><span class="hint">绝对值优先于百分比</span></div>
 <div style="overflow-x:auto"><table><thead><tr><th>层次</th><th>指标</th><th>覆盖</th><th class="num">说明</th></tr></thead><tbody>
-<tr><td><b>同比</b></td><td>营收 / 归母净利</td><td>4 期</td><td class="num">数字卡随报告期切换</td></tr>
+<tr><td><b>同比</b></td><td>营收 / 归母净利</td><td>8 期</td><td class="num">数字卡随报告期切换</td></tr>
 <tr><td><b>单季同比</b></td><td>rev_yoy_q / np_yoy_q</td><td>已覆盖</td><td class="num">见快照字段</td></tr>
-<tr><td><b>近 4 期趋势</b></td><td>营收 / 归母净利</td><td>4 期</td><td class="num">见上方柱状图，可切换报告期</td></tr>
+<tr><td><b>近 8 期趋势</b></td><td>营收 / 归母净利</td><td>8 期</td><td class="num">见上方柱状图，可切换报告期</td></tr>
 <tr><td><b>管理层措辞 / 指引</b></td><td>公告正文语义对比</td><td><b>未覆盖</b></td><td class="num">无结构化字段，不编造</td></tr>
 </tbody></table></div>
 <div class="kpi-grid" style="margin-top:14px">
-<div class="kpi-cell"><div class="k">毛利率</div><div class="v" id="k-gross">37.00%</div></div>
-<div class="kpi-cell"><div class="k">净利率</div><div class="v" id="k-margin">11.89%</div></div>
-<div class="kpi-cell"><div class="k">EPS</div><div class="v" id="k-eps">0.83</div></div>
-<div class="kpi-cell"><div class="k">资产负债率</div><div class="v" id="k-debt">41.00%</div></div>
+<div class="kpi-cell"><div class="k">毛利率</div><div class="v" id="k-gross">34.00%</div></div>
+<div class="kpi-cell"><div class="k">净利率</div><div class="v" id="k-margin">12.77%</div></div>
+<div class="kpi-cell"><div class="k">EPS</div><div class="v" id="k-eps">0.81</div></div>
+<div class="kpi-cell"><div class="k">资产负债率</div><div class="v" id="k-debt">39.00%</div></div>
 </div>
 <div class="notice warn">经营现金流 ÷ 净利润、分部结构无结构化字段，标「未覆盖」，不做估算。</div>
 </section>
 <section class="card"><div class="card-head"><h2>估值联动与买入区间</h2><span class="hint">财报发布 / 除权后必须重算</span></div>
 <div style="overflow-x:auto"><table><thead><tr><th>指标</th><th class="num">值</th><th>口径</th></tr></thead><tbody>
-<tr><td>PE(TTM)</td><td class="num mono">8.20</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
-<tr><td>PB</td><td class="num mono">0.95</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
-<tr><td>股息率</td><td class="num mono">6.10%</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
-<tr><td>10 年分位</td><td class="num mono">30.00%</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
+<tr><td>PE(TTM)</td><td class="num mono">24.30</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
+<tr><td>PB</td><td class="num mono">8.10</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
+<tr><td>股息率</td><td class="num mono">3.00%</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
+<tr><td>10 年分位</td><td class="num mono">38.00%</td><td class="hint">快照值，带 source/as_of/currency</td></tr>
 </tbody></table></div>
-<div class="notice"><b>可接受价格带</b>　70.65 – 75.36 （接近合理；主锚 股息率分位；置信度 reference）。失效观察：财报逻辑破坏、除权除息、商品价格大变时重算</div>
-<div class="notice warn"><b>参考级</b>　估值分位未覆盖或为平台测算替代锚，低置信度、需人工确认。<b>价格位置不等于估值分位</b>，未用 K 线分位冒充。</div>
+<div class="notice"><b>可接受价格带</b>　1,275.00 – 1,380.00 （接近合理；主锚 PE 分位；置信度 standard）。失效观察：财报逻辑破坏、除权除息、商品价格大变时重算</div>
 </section>
 <section class="card"><div class="card-head"><h2>同业横比</h2><span class="hint">只比比率与增速，不比绝对金额</span></div>
 <div style="overflow-x:auto"><table><thead><tr><th>同业</th><th>代码</th><th class="num">毛利率</th><th class="num">ROE</th><th class="num">PE</th><th class="num">PB</th></tr></thead><tbody>
-<tr><td>示例恒生</td><td class="mono">hk00011</td><td class="num mono">24.00%</td><td class="num mono">7.00%</td><td class="num mono">9.00</td><td class="num mono">1.00</td></tr>
-<tr><td>示例中银香港</td><td class="mono">hk02388</td><td class="num mono">28.00%</td><td class="num mono">8.50%</td><td class="num mono">11.00</td><td class="num mono">1.30</td></tr>
-<tr><td>示例东亚</td><td class="mono">hk00023</td><td class="num mono">32.00%</td><td class="num mono">10.00%</td><td class="num mono">13.00</td><td class="num mono">1.60</td></tr>
+<tr><td>示例五粮</td><td class="mono">sz000858</td><td class="num mono">24.00%</td><td class="num mono">7.00%</td><td class="num mono">9.00</td><td class="num mono">1.00</td></tr>
+<tr><td>示例汾酒</td><td class="mono">sh600809</td><td class="num mono">28.00%</td><td class="num mono">8.50%</td><td class="num mono">11.00</td><td class="num mono">1.30</td></tr>
+<tr><td>示例老窖</td><td class="mono">sz000568</td><td class="num mono">32.00%</td><td class="num mono">10.00%</td><td class="num mono">13.00</td><td class="num mono">1.60</td></tr>
 </tbody></table></div>
 <div class="src">跨市场只比毛利率、增速、ROE、PE/PB 等比率，不比绝对金额 各标的财报币种独立存于 earnings.json，页面分别标注 同业清单 role: peer_only，不进主清单、不参与价格告警、不给买入区间。</div>
 </section>
 <div class="grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px">
 <section class="card"><div class="card-head"><h2>股价反应校验</h2><span class="hint">headline 是否错位</span></div>
 <table><thead><tr><th>窗口</th><th class="num">涨跌</th></tr></thead><tbody>
-<tr><td>披露后 1 日</td><td class="num mono up">+0.29%</td></tr>
+<tr><td>披露后 1 日</td><td class="num mono down">-0.01%</td></tr>
 <tr><td>5 日</td><td class="num mono up">+1.60%</td></tr>
 <tr><td>20 日</td><td class="num mono down">-0.90%</td></tr>
 </tbody></table>
@@ -153,9 +190,10 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 <div class="notice warn"><b>无可靠一致预期</b>　平台测算值，机构数为 0，非一手机构一致预期，需核实原文。本页不做超预期/不及预期的硬判定。</div>
 <div class="src">若有一手预期，实际 vs 预测方向可在此展示；缺失时如实写「无可靠一致预期」。</div></section>
 </div>
+<section class="card"><div class="card-head"><h2>研究结论对账</h2><span class="hint">未覆盖</span></div><div class="research-src">尚未安排深度研究。只在存在待决的单一问题时才写，不为覆盖而覆盖——无报告的标的显式标注，不静默留空。格式见 references/research-contract.md。</div><div class="src">已覆盖：示例银行-H（hk00005）。</div></section>
 <section class="card"><div class="card-head"><h2>公告溯源</h2><span class="hint">按时间倒序，精确到秒</span></div>
 <div style="overflow-x:auto"><table><thead><tr><th>时间</th><th>标题</th><th>类型</th></tr></thead><tbody>
-<tr><td class="mono hint">2025-10-30 17:30:00</td><td>示例银行-H 2025 年第三季度报告（虚构）</td><td>report</td></tr>
+<tr><td class="mono hint">2025-10-30 17:30:00</td><td>示例白酒 2025 年第三季度报告（虚构）</td><td>report</td></tr>
 </tbody></table></div>
 <div class="src">公告按代码取清单做时间增量，不用语义检索（实测会串到别家公司）。关键数字均标注来源与取数时间。</div>
 </section>
@@ -170,11 +208,11 @@ ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
 <details><summary>图表规范</summary><div class="detail-body">分组柱状图使用真实金额与 0 线，亏损向下；柱端数值常显并按量级自适应精度、逐个防重叠避让；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28；窄屏可横向滚动，不靠缩小字号硬塞；悬停只作精度补充。</div></details>
 </section>
 <div class="foot">
-<div class="src">财报快照：demo-fixture （2026-01-05）；行情估值：2026-01-05；构建时间：2026-11-13T10:17:18+08:00。固定路径 dashboard/stocks/hk00005.html，覆盖更新不改名。</div>
+<div class="src">财报快照：demo-fixture （2026-01-05）；行情估值：2026-01-05；构建时间：2026-11-13T19:12:04+08:00。固定路径 dashboard/stocks/sh600519.html，覆盖更新不改名。</div>
 <div>本页面全部为<b>虚构演示数据</b>。</div>
 <div style="margin-top:8px">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</div>
 </div></div>
-<script>window.__D__ = {"periods": [{"period": "2025-06-30", "publ": "2025-07-15", "type": "H1", "revenue": 702.0, "net_profit": 83.5, "rev_yoy": 2.8, "np_yoy": 1.2, "rev_yoy_q": 3.4, "np_yoy_q": 2.4, "gross": 37.0, "net_margin": 11.89, "roe": 11.0, "eps": 0.83, "debt": 41.0, "div_ttm": 1.57}, {"period": "2024-12-31", "publ": "2024-13-15", "type": "FY", "revenue": 688.0, "net_profit": 81.0, "rev_yoy": 2.2, "np_yoy": 0.8, "rev_yoy_q": 3.1, "np_yoy_q": 2.2, "gross": 37.0, "net_margin": 11.77, "roe": 11.0, "eps": 0.81, "debt": 41.0, "div_ttm": 1.57}, {"period": "2024-06-30", "publ": "2024-07-15", "type": "H1", "revenue": 674.0, "net_profit": 78.5, "rev_yoy": 1.6, "np_yoy": 0.4, "rev_yoy_q": 2.8, "np_yoy_q": 2.0, "gross": 37.0, "net_margin": 11.65, "roe": 11.0, "eps": 0.79, "debt": 41.0, "div_ttm": 1.57}, {"period": "2023-12-31", "publ": "2023-13-15", "type": "FY", "revenue": 660.0, "net_profit": 76.0, "rev_yoy": 1.0, "np_yoy": 0.0, "rev_yoy_q": 2.5, "np_yoy_q": 1.8, "gross": 37.0, "net_margin": 11.52, "roe": 11.0, "eps": 0.76, "debt": 41.0, "div_ttm": 1.57}], "currency": "HKD", "code": "hk00005"};</script>
+<script>window.__D__ = {"periods": [{"period": "2025-12-31", "publ": "2025-13-15", "type": "FY", "revenue": 638.0, "net_profit": 81.5, "rev_yoy": 6.2, "np_yoy": 3.8, "rev_yoy_q": 4.6, "np_yoy_q": 3.2, "gross": 34.0, "net_margin": 12.77, "roe": 10.0, "eps": 0.81, "debt": 39.0, "div_ttm": 30.0}, {"period": "2025-09-30", "publ": "2025-10-15", "type": "Q3", "revenue": 624.0, "net_profit": 79.0, "rev_yoy": 5.6, "np_yoy": 3.4, "rev_yoy_q": 4.3, "np_yoy_q": 3.0, "gross": 34.0, "net_margin": 12.66, "roe": 10.0, "eps": 0.79, "debt": 39.0, "div_ttm": 30.0}, {"period": "2025-06-30", "publ": "2025-07-15", "type": "H1", "revenue": 610.0, "net_profit": 76.5, "rev_yoy": 5.0, "np_yoy": 3.0, "rev_yoy_q": 4.0, "np_yoy_q": 2.8, "gross": 34.0, "net_margin": 12.54, "roe": 10.0, "eps": 0.77, "debt": 39.0, "div_ttm": 30.0}, {"period": "2025-03-31", "publ": "2025-04-15", "type": "FY", "revenue": 596.0, "net_profit": 74.0, "rev_yoy": 4.4, "np_yoy": 2.6, "rev_yoy_q": 3.7, "np_yoy_q": 2.6, "gross": 34.0, "net_margin": 12.42, "roe": 10.0, "eps": 0.74, "debt": 39.0, "div_ttm": 30.0}, {"period": "2024-12-31", "publ": "2024-13-15", "type": "FY", "revenue": 582.0, "net_profit": 71.5, "rev_yoy": 3.8, "np_yoy": 2.2, "rev_yoy_q": 3.4, "np_yoy_q": 2.4, "gross": 34.0, "net_margin": 12.29, "roe": 10.0, "eps": 0.71, "debt": 39.0, "div_ttm": 30.0}, {"period": "2024-09-30", "publ": "2024-10-15", "type": "Q3", "revenue": 568.0, "net_profit": 69.0, "rev_yoy": 3.2, "np_yoy": 1.8, "rev_yoy_q": 3.1, "np_yoy_q": 2.2, "gross": 34.0, "net_margin": 12.15, "roe": 10.0, "eps": 0.69, "debt": 39.0, "div_ttm": 30.0}, {"period": "2024-06-30", "publ": "2024-07-15", "type": "H1", "revenue": 554.0, "net_profit": 66.5, "rev_yoy": 2.6, "np_yoy": 1.4, "rev_yoy_q": 2.8, "np_yoy_q": 2.0, "gross": 34.0, "net_margin": 12.0, "roe": 10.0, "eps": 0.67, "debt": 39.0, "div_ttm": 30.0}, {"period": "2024-03-31", "publ": "2024-04-15", "type": "FY", "revenue": 540.0, "net_profit": 64.0, "rev_yoy": 2.0, "np_yoy": 1.0, "rev_yoy_q": 2.5, "np_yoy_q": 1.8, "gross": 34.0, "net_margin": 11.85, "roe": 10.0, "eps": 0.64, "debt": 39.0, "div_ttm": 30.0}], "currency": "CNY", "code": "sh600519"};</script>
 <script>
 (function(){
   var D=window.__D__||{}, P=D.periods||[];

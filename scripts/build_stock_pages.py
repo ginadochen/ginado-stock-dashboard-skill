@@ -61,6 +61,39 @@ h1{font-size:22px;margin:0}h2{font-size:16px;margin:0}h3{font-size:13px;margin:0
 .conclusion{padding:14px 16px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);font-size:13.5px;line-height:1.85}
 .conclusion b{color:var(--accent)}
+.research-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+  padding:7px 12px;border-radius:9px;text-decoration:none;color:var(--accent);
+  border:1px solid rgba(91,156,255,.45);background:rgba(91,156,255,.12)}
+.research-btn:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.2)}
+.research-btn .rb-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;opacity:.7;
+  border-left:1px solid rgba(91,156,255,.4);padding-left:7px}
+.research-strip{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:13px;
+  padding:11px 14px;border-radius:10px;text-decoration:none;
+  border:1px solid rgba(91,156,255,.35);background:rgba(91,156,255,.09)}
+.research-strip:hover{text-decoration:none;border-color:var(--accent);background:rgba(91,156,255,.16)}
+.research-strip .rs-kicker{font-size:10.5px;letter-spacing:.05em;color:var(--accent);
+  font-weight:600;white-space:nowrap}
+.research-strip .rs-title{flex:1;min-width:170px;font-size:12.5px;color:var(--text)}
+.research-strip .rs-count{font-size:11px;color:var(--text-2);white-space:nowrap}
+.research-strip .rs-go{font-size:11.5px;color:var(--accent);white-space:nowrap;
+  border-left:1px solid rgba(91,156,255,.3);padding-left:12px}
+.rstat{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;
+  border:1px dashed var(--border);background:var(--panel-2);color:var(--text-3);white-space:nowrap}
+.rstat.confirmed{color:var(--accent);border-style:solid;border-color:rgba(91,156,255,.4);
+  background:rgba(91,156,255,.1)}
+.rstat.refuted{color:var(--warn);border-style:solid;border-color:rgba(240,169,75,.4);
+  background:rgba(240,169,75,.1)}
+.rstat.partial{color:var(--text-2);border-style:dashed}
+.rcheck{border-bottom:1px solid var(--border);padding:12px 0 11px}
+.rcheck:last-child{border-bottom:0}
+.rcheck-head{display:flex;gap:10px;align-items:flex-start}
+.rcheck-id{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:22px;padding-top:3px}
+.rcheck-claim{flex:1;font-size:13px;line-height:1.65}
+.rcheck-meta{font-size:11px;color:var(--text-3);line-height:1.8;margin-top:5px;padding-left:32px}
+.rcheck-meta b{color:var(--text-2);font-weight:500;margin-right:4px}
+.rcheck-ev{font-size:11px;color:var(--accent);margin-top:3px;padding-left:32px}
+.research-src{font-size:11px;color:var(--text-3);line-height:1.8;margin:12px 0 0}
+.research-src b{color:var(--text-2);font-weight:500}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
 .kpi-cell{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
 .kpi-cell .k{font-size:11px;color:var(--text-3)}
@@ -246,6 +279,171 @@ def as_dict(v):
     return v if isinstance(v, dict) else {}
 
 
+# ---------------------------------------------------------------------------
+# Optional module: research reconciliation.
+#
+# This package does NOT generate research reports. It defines the contract
+# (see references/research-contract.md), then parses the report's
+# "## 待验证命题" table and merges the check state from
+# state/research-checks.json into the per-stock page.
+#
+# Report files live at <root>/reports/YYYY-MM/YYYY-MM-DD-research-<code>.md
+# and are NEVER overwritten. Only the check state changes over time, so
+# "what did I believe then, was it right?" stays auditable.
+# ---------------------------------------------------------------------------
+
+STATUS_LABEL = {"pending": "待观察", "confirmed": "已证实",
+                "refuted": "已证伪", "partial": "部分成立"}
+
+# Fixed wording. Only crediting an external community source would mislead:
+# the headline financial figures come from the user's own earnings snapshot.
+RESEARCH_SOURCE = ("<b>信源分工</b>　研究观点（外部叙事、行业争议）× "
+                   "一手资料（公告、监管规则、公开报道）× "
+                   "本机财报（本地快照里的营收/净利/毛利率）")
+
+MAG_ICON = ('<svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
+            '<circle cx="6.8" cy="6.8" r="4.9" stroke="currentColor" stroke-width="1.6"/>'
+            '<path d="M10.4 10.4L14 14" stroke="currentColor" stroke-width="1.6" '
+            'stroke-linecap="round"/></svg>')
+
+RESEARCH_ABSENT = ("尚未安排深度研究。只在存在待决的单一问题时才写，"
+                   "不为覆盖而覆盖——无报告的标的显式标注，不静默留空。"
+                   "格式见 references/research-contract.md。")
+
+
+def latest_research(root: Path, code: str) -> Path | None:
+    """Newest research report for a ticker, or None. Never raises."""
+    reports = root / "reports"
+    if not reports.is_dir():
+        return None
+    files = sorted(reports.glob(f"*/*-research-{code}.md"), key=lambda p: p.stem)
+    return files[-1] if files else None
+
+
+def research_title(md_path: Path) -> str:
+    for ln in md_path.read_text(encoding="utf-8").splitlines():
+        if ln.startswith("# "):
+            return ln[2:].strip()
+    return md_path.stem
+
+
+def research_href(md_path: Path) -> str:
+    """Relative URL from dashboard/stocks/ to reports/YYYY-MM/<name>.html."""
+    return f"../../reports/{md_path.parent.name}/{md_path.stem}.html"
+
+
+def parse_props(md_path: Path) -> list[dict]:
+    """Parse the "## 待验证命题" table into [{id, claim, metric, rule}].
+
+    This is the parse contract between this script and the report Markdown.
+    A missing section returns [] rather than raising, so one malformed
+    report cannot take down every per-stock page.
+    """
+    lines = md_path.read_text(encoding="utf-8").splitlines()
+    try:
+        start = next(i for i, ln in enumerate(lines)
+                     if ln.strip().startswith("## ") and "待验证命题" in ln) + 1
+    except StopIteration:
+        return []
+    rows, header_done = [], False
+    for ln in lines[start:]:
+        s = ln.strip()
+        if s.startswith("## "):
+            break
+        if not s.startswith("|"):
+            if rows:
+                break
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if len(cells) < 4:
+            continue
+        if not header_done:
+            header_done = True
+            continue
+        if all(set(c) <= set("-: ") for c in cells):
+            continue
+        rows.append({"id": cells[0], "claim": cells[1],
+                     "metric": cells[2], "rule": cells[3]})
+    return rows
+
+
+def load_checks(root: Path) -> dict:
+    path = root / "state" / "research-checks.json"
+    if not path.is_file():
+        return {}
+    return as_dict(load_json(path).get("checks"))
+
+
+def research_label(checks_all: dict, code: str) -> str:
+    """Entry wording comes from data, not code. A package that hard-codes one
+    vendor name in its UI would misreport the source for everyone else."""
+    raw = as_dict(as_dict(checks_all).get(code)).get("source_label")
+    return str(raw).strip() if raw else "深度研究"
+
+
+def research_card(code: str, res_md: Path | None, checks_all: dict,
+                  covered: list[tuple[str, str]]) -> str:
+    """Reconciliation card. Report is immutable; only check state moves."""
+    label = research_label(checks_all, code)
+    h = ['<section class="card"><div class="card-head"><h2>研究结论对账</h2>']
+    if res_md is None:
+        h.append('<span class="hint">未覆盖</span></div>')
+        h.append(f'<div class="research-src">{RESEARCH_ABSENT}</div>')
+        if covered:
+            h.append('<div class="src">已覆盖：'
+                     + "；".join(f"{esc(n)}（{esc(c)}）" for c, n in covered)
+                     + '。</div>')
+        h.append('</section>')
+        return "".join(h)
+
+    props = parse_props(res_md)
+    by_id = {i.get("id"): i for i in as_list(as_dict(checks_all.get(code)).get("items"))
+             if isinstance(i, dict)}
+    href = research_href(res_md)
+    h.append(f'<span class="hint">{esc(label)} · {len(props)} 条待验证命题</span></div>')
+    h.append('<div class="src" style="margin:0 0 10px">报告原文：'
+             f'<a href="{esc(href)}">《{esc(research_title(res_md))}》↗</a>'
+             '　·　报告一次性产出、永不改写，本表只更新命题的核对状态。</div>')
+    if not props:
+        h.append('<div class="src"><b>命题缺失</b>　该报告未包含可解析的「## 待验证命题」小节，'
+                 '请按 references/research-contract.md 补齐后重建。</div>')
+    else:
+        for p in props:
+            item = as_dict(by_id.get(p["id"]))
+            st = str(item.get("status") or "pending")
+            ev = item.get("evidence")
+            h.append('<div class="rcheck"><div class="rcheck-head">'
+                     f'<span class="rcheck-id">{esc(p["id"])}</span>'
+                     f'<span class="rcheck-claim">{esc(p["claim"])}</span>'
+                     f'<span class="rstat {esc(st)}">{esc(STATUS_LABEL.get(st, st))}</span></div>')
+            h.append('<div class="rcheck-meta">'
+                     f'<b>核对指标</b>{esc(p["metric"])}　·　'
+                     f'<b>判定条件</b>{esc(p["rule"])}</div>')
+            if ev:
+                h.append(f'<div class="rcheck-ev">证据：{esc(ev)}</div>')
+            h.append('</div>')
+    nxt = as_dict(checks_all.get(code)).get("next_check")
+    h.append(f'<div class="research-src">{RESEARCH_SOURCE}'
+             + (f'<br><b>下次核对</b>　{esc(nxt)}　·　报告不可变、状态可变，每次核对留痕。'
+                if nxt else '')
+             + '</div>')
+    h.append('<div class="src">命题正文唯一来源：报告 Markdown 的「待验证命题」小节；'
+             '状态唯一来源：state/research-checks.json（本脚本只读）。核对时点为财报披露后，非实时。</div>')
+    h.append('</section>')
+    return "".join(h)
+
+
+def research_strip(res_md: Path, n_props: int, label: str) -> str:
+    """First-screen entry. The card sits far down the page; a top bar button
+    alone is not enough for something worth reading."""
+    return (f'<a class="research-strip" href="{esc(research_href(res_md))}">'
+            f'<span class="rs-kicker">{esc(label)}</span>'
+            f'<span class="rs-title">{esc(research_title(res_md))}</span>'
+            + (f'<span class="rs-count">{n_props} 条待验证命题</span>' if n_props else '')
+            + '<span class="rs-go">阅读全文 ↗</span></a>')
+
+
+
 def conclusion_block(name, latest, conf, n_periods):
     rev_yoy = latest.get("rev_yoy")
     np_yoy = latest.get("np_yoy")
@@ -272,7 +470,9 @@ def conclusion_block(name, latest, conf, n_periods):
 
 
 def build_page(root: Path, code: str, name: str, info: dict, earnings: dict,
-               peers_cfg: dict, valuation: dict, bands: dict, mode: str) -> str:
+               peers_cfg: dict, valuation: dict, bands: dict, mode: str,
+               res_md: Path | None = None, checks_all: dict | None = None,
+               covered: list[tuple[str, str]] | None = None) -> str:
     periods = as_list(info.get("periods"))
     if not periods:
         return ""
@@ -303,7 +503,12 @@ def build_page(root: Path, code: str, name: str, info: dict, earnings: dict,
     h.append('<div class="top"><div><a class="back-link" href="../index.html" '
              'onclick="if(document.referrer && document.referrer.indexOf(\'index.html\')>=0)'
              '{history.back();return false;}">← 返回看板</a></div>'
-             '<button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div>')
+             '<div style="display:flex;gap:9px;align-items:center">')
+    if res_md is not None:
+        h.append(f'<a class="research-btn" href="{esc(research_href(res_md))}">'
+                 f'{MAG_ICON}<span>{esc(research_label(checks_all or {}, code))}</span>'
+                 '<span class="rb-tag">REPORT</span></a>')
+    h.append('<button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div></div>')
     if is_demo:
         h.append('<div class="banner"><b>DEMO · 演示数据</b>　本页所有财务数字、行情与公告均为'
                  '<b>完全虚构</b>的示例值，与任何真实公司财报无关。</div>')
@@ -325,6 +530,9 @@ def build_page(root: Path, code: str, name: str, info: dict, earnings: dict,
     h.append('<section class="card"><div class="card-head"><h2>一句话结论</h2>'
              '<span class="hint">规则生成，非投资建议</span></div>')
     h.append(conclusion_block(name, newest, conf, len(periods)))
+    if res_md is not None:
+        h.append(research_strip(res_md, len(parse_props(res_md)),
+                                research_label(checks_all or {}, code)))
     h.append('</section>')
 
     # ---- period switch ----
@@ -476,6 +684,9 @@ def build_page(root: Path, code: str, name: str, info: dict, earnings: dict,
              '缺失时如实写「无可靠一致预期」。</div></section>')
     h.append('</div>')
 
+    # ---- research reconciliation (optional module) ----
+    h.append(research_card(code, res_md, checks_all or {}, covered or []))
+
     # ---- announcements + limitations ----
     h.append('<section class="card"><div class="card-head"><h2>公告溯源</h2>'
              '<span class="hint">按时间倒序，精确到秒</span></div>')
@@ -555,18 +766,26 @@ def main() -> None:
     fin = as_dict(earnings.get("financials"))
 
     P["stocks"].mkdir(parents=True, exist_ok=True)
+    name_of = {str(c.get("primary", "")): str(c.get("name", ""))
+               for c in as_list(wl.get("codes"))}
+    codes = [c for c in name_of if c and c in fin]
+    # Optional module: no report file -> the whole block renders as "未覆盖".
+    research_map = {c: latest_research(root, c) for c in codes}
+    checks_all = load_checks(root)
+    covered = [(c, name_of.get(c, c)) for c in codes if research_map.get(c)]
+
     made = []
-    for c in as_list(wl.get("codes")):
-        code = str(c.get("primary", ""))
-        if not code or code not in fin:
-            continue
-        html = build_page(root, code, str(c.get("name", code)), as_dict(fin[code]),
-                          earnings, peers_cfg, valuation, bands, mode)
+    for code in codes:
+        html = build_page(root, code, name_of.get(code, code), as_dict(fin[code]),
+                          earnings, peers_cfg, valuation, bands, mode,
+                          research_map.get(code), checks_all, covered)
         if not html:
             continue
         (P["stocks"] / f"{code}.html").write_text(html, encoding="utf-8")
         made.append(code)
     print(f"built {len(made)} stock pages: {', '.join(made)}")
+    if covered:
+        print(f"research reports linked: {', '.join(c for c, _ in covered)}")
 
 
 if __name__ == "__main__":

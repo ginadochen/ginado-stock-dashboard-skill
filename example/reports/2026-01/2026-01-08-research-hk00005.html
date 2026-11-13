@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>示例银行-H：净息差还能守住吗 · 深度研究示例</title>
+<style>
+:root{
+  --bg:#0f141c;--panel:#182130;--panel-2:#1d2737;--border:#2a3648;
+  --text:#e8eef7;--text-2:#aab8cc;--text-3:#7d8ca3;
+  --accent:#5b9cff;--warn:#f0a94b;--up:#f0616b;--down:#3fc28b;
+  --mono:"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.8;font-size:14.5px}
+.wrap{max-width:760px;margin:0 auto;padding:34px 22px 64px}
+.demo{padding:12px 15px;border-radius:11px;border:1px solid #6a5320;
+  background:rgba(240,169,75,.12);color:var(--warn);font-size:12.5px;margin-bottom:22px}
+.demo b{color:var(--warn)}
+h1{font-size:25px;line-height:1.45;margin:0 0 10px;font-weight:650}
+h2{font-size:16.5px;margin:32px 0 10px;font-weight:600}
+.meta{font-size:11.5px;color:var(--text-3);display:flex;gap:14px;flex-wrap:wrap;
+  margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.meta span{font-family:var(--mono)}
+p{margin:0 0 14px;color:var(--text-2)}
+p strong{color:var(--text);font-weight:600}
+ul{margin:0 0 14px;padding-left:20px;color:var(--text-2)}
+li{margin-bottom:6px}
+blockquote{margin:0 0 22px;padding:13px 16px;border-left:3px solid var(--warn);
+  background:var(--panel-2);border-radius:0 9px 9px 0;color:var(--text-3);font-size:13px}
+table{width:100%;border-collapse:collapse;margin:14px 0 8px;font-size:13px}
+th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--text-3);font-weight:500;font-size:11.5px;white-space:nowrap}
+td:first-child{font-family:var(--mono);color:var(--text-3);white-space:nowrap}
+td:nth-child(2){color:var(--text)}
+td:nth-child(3),td:nth-child(4){color:var(--text-2);font-size:12.5px}
+.st{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;white-space:nowrap;
+  border:1px dashed var(--border);background:var(--panel-2);color:var(--text-3)}
+.st.partial{color:var(--text-2);border-style:dashed}
+.foot{margin-top:38px;padding-top:18px;border-top:1px solid var(--border);
+  font-size:11.5px;color:var(--text-3);line-height:1.9}
+.foot b{color:var(--text-2);font-weight:500}
+.back{display:inline-block;margin-bottom:20px;font-size:12.5px;color:var(--accent);
+  text-decoration:none;border:1px solid var(--border);padding:6px 11px;border-radius:8px}
+.back:hover{border-color:var(--accent)}
+code{font-family:var(--mono);font-size:12px;background:var(--panel-2);
+  padding:1px 5px;border-radius:4px;color:var(--text-2)}
+@media(max-width:620px){.wrap{padding:24px 16px 48px}h1{font-size:20px}
+  table{font-size:12px}th,td{padding:8px 7px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a class="back" href="../../dashboard/stocks/hk00005.html">← 返回 hk00005 详情页</a>
+
+<div class="demo"><b>DEMO · 报告示例</b>　本页是格式示例，「示例银行-H」不存在，文中数字、命题与结论全部虚构，仅用于演示报告契约与对账机制。真实使用时，本页由你自己的渲染工具生成，本包不负责产报告。</div>
+
+<h1>示例银行-H：净息差还能守住吗</h1>
+<div class="meta">
+  <span>hk00005</span><span>2026-01-08</span><span>3 条待验证命题</span><span>demo-fixture</span>
+</div>
+
+<blockquote>报告写在财报之前，用于固定「当时怎么判断的」。财报出来后只更新命题状态，不改这篇正文——否则半年后你会以为自己一直判断正确。</blockquote>
+
+<h2>一、为什么要做这份研究</h2>
+<p><code>hk00005</code> 在演示组合里占比较高，而它的核心变量——净息差——同时受资产端定价与负债端成本两头挤压，方向不确定。这类问题靠单季财报只能看到结果，看不到机制，适合先写清假设、再等财报来对账。</p>
+
+<h2>二、三条互相拉扯的线索</h2>
+<p><strong>资产端在让价。</strong>演示数据里近三期生息资产收益率逐期下行，而贷款规模仍在扩张。规模换价格是主动选择还是被动承压，单看财报分不出来。</p>
+<p><strong>负债端有黏性。</strong>存款成本的下行速度慢于资产端，这是净息差收窄的直接来源。若定期化趋势延续，成本刚性问题会更突出。</p>
+<p><strong>非息收入的占比在抬升。</strong>这既可能是中间业务改善，也可能是息差压力下的被动替代。两者的持续性完全不同，需要拆开看。</p>
+
+<h2>三、我的判断</h2>
+<p>净息差在下一个报告期<strong>仍会小幅收窄，但幅度收窄</strong>——负债端重定价的滞后效应正在释放，而资产端让价速度已经放缓。真正的风险不在息差本身，而在「用非息收入填补息差缺口」这个替代是否可持续。</p>
+<p>这个判断有明确的反转条件：<strong>如果单季净息差环比走平，说明负债端重定价已快于资产端，结论反转。</strong></p>
+
+<h2>四、这份研究不做什么</h2>
+<ul>
+  <li>不给目标价、不给买卖点。研究归研究，区间归区间。</li>
+  <li>不外推行业整体。这是单一个案的机制判断，样本量为 1。</li>
+  <li>不预测利率路径。那是宏观问题，不是个股问题。</li>
+</ul>
+
+<h2>五、待验证命题</h2>
+<table>
+<thead><tr><th>编号</th><th>命题</th><th>核对指标</th><th>判定条件</th></tr></thead>
+<tbody>
+<tr><td>P1</td><td>净息差仍在收窄，但降幅收窄 <span class="st partial">部分成立</span></td><td>单季净息差环比变动</td><td>环比降幅小于上一期则成立；走平或转正视为反转</td></tr>
+<tr><td>P2</td><td>存款定期化推高负债成本 <span class="st">待观察</span></td><td>定期存款占比与计息负债成本率</td><td>定期占比继续上升且成本率不降则成立</td></tr>
+<tr><td>P3</td><td>非息收入增长是息差压力下的被动替代 <span class="st">待观察</span></td><td>非息收入占营收比重 + 手续费净收入增速</td><td>占比上升但手续费增速低于总营收则成立</td></tr>
+</tbody>
+</table>
+<p style="font-size:11.5px;color:var(--text-3);margin-top:8px">状态由 <code>state/research-checks.json</code> 提供，本表在每个详情页上渲染为「研究结论对账」卡片。P1 的状态是演示用的，用来展示「部分成立」徽章长什么样。</p>
+
+<h2>六、数据来源与局限</h2>
+<p>本示例报告<strong>不引用任何真实数据源</strong>。真实使用时，命题里的核对指标必须能在你自己的财报快照里查到，查不到就不要写这条命题——挂不上指标的判断只是观点。</p>
+
+<div class="foot">
+<b>格式契约</b>　报告正文与「待验证命题」表格的写法见仓库 <code>references/research-contract.md</code>。<br>
+<b>不可变</b>　同名 <code>.md</code> 是唯一真相来源；要改结论就写新日期的新报告，不要覆盖旧文件。<br>
+<b>免责</b>　本页为虚构示例，与任何真实机构、真实财报无关，不构成任何投资建议。
+</div>
+
+</div>
+</body>
+</html>

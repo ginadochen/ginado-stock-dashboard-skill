@@ -27,9 +27,16 @@
 !assets/templates/*.md
 !assets/demo/*.json
 !assets/demo/*.md
-!example/*.html
-!example/stocks/*.html
+# 深度研究示例（格式契约的演示 fixture），虚构内容
+!assets/demo/research/*.md
+!assets/demo/research/*.json
+!assets/demo/research/*.html
+# example 镜像「实例根」结构：dashboard/ + reports/，跨目录链接才点得通
+!example/dashboard/*.html
+!example/dashboard/stocks/*.html
+!example/reports/*/*.html
 !example/*.md
+# 实例根下的 reports/ 是私人研究产物，只放行 example/ 里的虚构示例
 
 # 明确排除（即使路径命中上面的规则）
 .sandbox/
@@ -45,6 +52,7 @@ __pycache__/
 !/.github/workflows/*.yaml
 *.json
 !assets/demo/*.json
+!assets/demo/research/*.json
 !example/*.json
 hosts.yml
 *_token*

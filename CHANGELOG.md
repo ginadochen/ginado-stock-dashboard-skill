@@ -2,6 +2,50 @@
 
 All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 
+## [0.4.0] - 2026-11-13
+
+把「我当时的判断」变成可对账的资产。这是第三个可选模块，与宏观、新闻同级。
+
+### 新增
+
+- **可选模块：深度研究对账**。`reports/YYYY-MM/YYYY-MM-DD-research-<主代码>.md` 出现的标的，
+  详情页长出顶栏入口按钮、首屏入口条、页内「研究结论对账」卡片三处；没有报告的标的显示「未覆盖」
+  并说明原因。删掉报告文件，整块自动消失，不需要改代码。
+- `references/research-contract.md`：报告格式契约（`## 待验证命题` 四列表格是解析契约）、
+  状态文件语义、调研来源的实测质量对比（哪个话题类型找得到东西、哪个找不到）。
+- `state/research-checks.json`：命题核对状态，由 `instance.py` 初始化。
+  **只存状态不存正文**，正文永远从报告 Markdown 现读，避免两份真相。
+- `scripts/build_stock_pages.py` 新增 `latest_research` / `parse_props` / `load_checks` /
+  `research_card` / `research_strip`。缺报告、缺小节都返回空而不抛错——一份格式错误的报告
+  不能炸掉全部详情页。
+- `assets/demo/research/`：一份完全虚构的示例报告 + 对应状态，`--mode demo` 时自动落到
+  `reports/`，让新用户 clone 下来就能看到这个模块长什么样。
+- `docs/screenshots/07-research-entry.png`、`08-research-card.png`。
+- `references/pitfalls.md` 新增 36–39：报告不可变、状态文件不存正文、未覆盖不许静默留空、
+  内容入口不要复用导航按钮的样式类。
+
+### 变更
+
+- **`example/` 改成镜像「实例根」结构**：`example/dashboard/` + `example/reports/`，
+  原来平铺的 `example/index.html`、`example/stocks/` 已删除。理由：研究报告在 `<实例根>/reports/`，
+  详情页链接是 `../../reports/…`，平铺结构下这个链接会跑到仓库外面，点不通。
+- README 的「先看效果」入口改为 `example/dashboard/index.html`。
+
+### 修复
+
+- 首页「分红日历」与「收益曲线」改为常驻展开，不再折叠。折叠面板对两块常看的内容没有意义，
+  反而多一次点击。
+
+### 设计取舍
+
+- **只开源「对账」，不开源「怎么产报告」**。产报告要接外部检索服务、要账号凭证，
+  陌生 clone 下来第一步就卡死；把一个装好也用不了的东西写进包里，等于给用户一个假承诺。
+  这个包负责把研究变成可对账的资产，不负责替你写研究。
+- **入口显示的来源名从 `source_label` 读，不写死在代码里**。不同人的研究来源不同，
+  在 UI 里硬编码一个供应商名字，等于替所有用户声明了来源。
+- **对账卡不放进首屏**。详情页主线是「结论 → 数据验证 → 预期差」，研究是另一条线，
+  硬插中间会切碎数据流；用首屏入口条解决可见性，比移动整卡划算。
+
 ## [0.3.0] - 2026-11-13
 
 修三个「数据看起来是新的、其实不是」的问题。都不影响首次安装，但长期运行后会咬人。

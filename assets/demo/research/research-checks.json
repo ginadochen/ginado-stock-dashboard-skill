@@ -1,0 +1,42 @@
+{
+  "source": "demo-fixture",
+  "as_of": "2026-01-20",
+  "note": "FICTIONAL DEMO. Check state for the demo research report. Real instances keep this file in state/ and it is never copied into a repository. Status values: pending / confirmed / refuted / partial.",
+  "status_legend": {
+    "pending": "待观察",
+    "confirmed": "已证实",
+    "refuted": "已证伪",
+    "partial": "部分成立"
+  },
+  "checks": {
+    "hk00005": {
+      "research": "2026-01-08-research-hk00005",
+      "researched_at": "2026-01-08",
+      "source_label": "知乎深度研究",
+      "next_check": "下一季报 · 演示用虚构时点",
+      "items": [
+        {
+          "id": "P1",
+          "status": "partial",
+          "verified_at": "2026-01-20",
+          "verified_period": "演示期",
+          "evidence": "演示数据：净息差环比降幅较前期收窄，但未走平——降幅收窄成立、走平未成立"
+        },
+        {
+          "id": "P2",
+          "status": "pending",
+          "verified_at": null,
+          "verified_period": null,
+          "evidence": null
+        },
+        {
+          "id": "P3",
+          "status": "pending",
+          "verified_at": null,
+          "verified_period": null,
+          "evidence": null
+        }
+      ]
+    }
+  }
+}

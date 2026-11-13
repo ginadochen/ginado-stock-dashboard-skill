@@ -425,7 +425,7 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 </div></details>
 <div class="src">来源 demo-fixture (fictional)；取数 2026-01-05T15:00:00+08:00；词表 config/industry-topics.yaml。只给标题、来源、时间与命中词，不摘录正文、不展示研报结论、不判断利好利空。</div>
 </section>
-<section class="card sec-toggle"><details><summary><h2>分红日历</h2><span class="hint">仅已实施派息，不虚构未来除权日 · 点击展开</span></summary><div class="collapse-body">
+<section class="card"><div class="card-head"><h2>分红日历</h2><span class="hint">仅已实施派息，不虚构未来除权日</span></div>
 <table><thead><tr><th>标的</th><th>除权日</th><th class="num">每股派息</th><th>报告期</th></tr></thead><tbody>
 <tr><td class="mono">sh601398</td><td class="mono">2025-06-10</td><td class="num mono">0.19</td><td>2024-FY</td></tr>
 <tr><td class="mono">sh601857</td><td class="mono">2025-06-11</td><td class="num mono">0.29</td><td>2024-FY</td></tr>
@@ -433,8 +433,8 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <tr><td class="mono">hk00005</td><td class="mono">2025-06-13</td><td class="num mono">2.35</td><td>2024-FY</td></tr>
 </tbody></table>
 <div class="src">未覆盖：hk00388、hk01299。接口无返回时标未覆盖，不假装全都有。</div>
-<div class="src">检测到新 ex_date 会自动重算该股买入区间；双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div></div></details></section>
-<section class="card sec-toggle"><details><summary><h2>收益曲线 · 数据积累中</h2><span class="hint">不足 10 个交易日不画曲线 · 点击展开</span></summary><div class="collapse-body">
+<div class="src">检测到新 ex_date 会自动重算该股买入区间；双源股息率分歧用实际派息实算并标注 TTM 与年度方案口径差，不静默取一。</div></section>
+<section class="card"><div class="card-head"><h2>收益曲线 · 数据积累中</h2><span class="hint">不足 10 个交易日不画曲线</span></div>
 <div class="eyebrow">已积累 1 / 10 个交易日</div>
 <div class="mini-progress"><i style="width:10%"></i></div>
 <div class="src">两三个点画出来的走势没有信息量，只会制造虚假精确感。收盘自动写 nav.json（总资产 / 现金 / 市值 / 基准收盘），攒够 10 个交易日再上曲线。</div>
@@ -442,7 +442,7 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 <div class="event-row"><span>价格告警</span><span class="mono">0 条</span></div>
 <div class="event-row"><span>财报速递</span><span class="mono">0 条</span></div>
 <div class="event-row"><span>数据源自检</span><span class="mono">0 次</span></div>
-</div></details></section></div>
+</section></div>
 <div class="grid g2">
 <section class="card"><div class="card-head"><h2>交易日记 · 先写理由再看数字</h2><span class="hint">防死扛的行为修正</span></div>
 <label class="check-item"><input type="checkbox"><span>当初的买入理由现在还成立吗</span></label>
@@ -475,13 +475,13 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 </section></div>
 <section class="card"><div class="card-head"><h2>口径与方法</h2><span class="hint">渐进式披露，按需展开</span></div>
 <details><summary>可接受价格带的算法</summary><div class="detail-body">估值锚 × 安全边际折算价格带，再用 52 周高低收窄；同卡标注估值偏贵程度。公式：d = max(0, (anchor_percentile - 50) / 100) * safety_factor + base_margin。每个区间带安全边际、触发确认条件、失效条件三件套；按行业选锚（红利看股息率分位、周期股看 PB 不用 PE、成长股看 PE/PEG），未盈利或次新标的不给区间。<b>到价不等于买点</b>。</div></details>
-<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-13T10:17:17+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
+<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-13T19:12:04+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
 <details><summary>三重币种与双源分歧</summary><div class="detail-body">财报记账本位币、股价交易币种、账户展示币种三者分离；跨市场只比比率与增速，不比绝对金额；A/H 按自然年季度对齐并标注周期差。双源冲突时两个值同时保留并标 conflict，禁止静默取一。汇率 HKDCNY = 0.85（demo-fixture (fictional)）。</div></details>
 <details><summary>未取到的数据</summary><div class="detail-body">10Y PE/PB percentile：hk00005、hk01299。原因：demo: 模拟校准源不可用。处理：保持 confidence: reference，禁止用价格分位冒充估值分位。一致预期若机构数为 0，标「平台测算值，非一手机构一致预期，需核实原文」。缺口标「未覆盖」不代表该指标为零或中性。</div></details>
 <details><summary>图表与页面规范</summary><div class="detail-body">分组柱状图 + 真实金额纵轴 + 0 线；柱端数值常显（按量级自适应精度、防重叠避让）；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28；正值标柱顶、亏损标柱底。所有网页单文件自包含，不引用外链 CSS/JS。</div></details>
 </section>
 <div class="foot">
-<div class="src">数据来源：demo-fixture（2026-01-05 收盘）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-13T10:17:18+08:00。</div>
+<div class="src">数据来源：demo-fixture（2026-01-05 收盘）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-13T19:12:04+08:00。</div>
 <div>本页面全部为<b>虚构演示数据</b>，仅用于展示样式与交互，不代表任何真实行情或持仓。</div>
 <div style="margin-top:8px">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</div>
 </div></div>
