@@ -35,6 +35,10 @@ All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 
 - 首页「分红日历」与「收益曲线」改为常驻展开，不再折叠。折叠面板对两块常看的内容没有意义，
   反而多一次点击。
+- **状态文件写坏会让 6 个页面全部构建失败**。`state/research-checks.json` 是手工编辑的，
+  一个尾逗号就抛 `JSONDecodeError`，整个看板出不来。现在降级为「全部待观察」并在 stderr
+  报警，既不炸页面也不掩盖。报告 Markdown 存成 GBK 编码时同理，降级为「命题缺失」。
+  这条是边界自测时打出来的，happy path 上永远看不到。
 
 ### 设计取舍
 

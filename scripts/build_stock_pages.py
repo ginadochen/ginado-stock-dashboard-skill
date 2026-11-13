@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from common import (
@@ -320,8 +321,19 @@ def latest_research(root: Path, code: str) -> Path | None:
     return files[-1] if files else None
 
 
+def _read_md(md_path: Path) -> str:
+    """Reports are hand-written. A stray encoding or permissions error must
+    degrade to 'no claims parsed', not take down every per-stock page."""
+    try:
+        return md_path.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError) as exc:
+        print(f"WARN: {md_path} 无法按 UTF-8 读取（{exc.__class__.__name__}），"
+              "该报告按「命题缺失」处理", file=sys.stderr)
+        return ""
+
+
 def research_title(md_path: Path) -> str:
-    for ln in md_path.read_text(encoding="utf-8").splitlines():
+    for ln in _read_md(md_path).splitlines():
         if ln.startswith("# "):
             return ln[2:].strip()
     return md_path.stem
@@ -339,7 +351,7 @@ def parse_props(md_path: Path) -> list[dict]:
     A missing section returns [] rather than raising, so one malformed
     report cannot take down every per-stock page.
     """
-    lines = md_path.read_text(encoding="utf-8").splitlines()
+    lines = _read_md(md_path).splitlines()
     try:
         start = next(i for i, ln in enumerate(lines)
                      if ln.strip().startswith("## ") and "待验证命题" in ln) + 1
@@ -368,10 +380,18 @@ def parse_props(md_path: Path) -> list[dict]:
 
 
 def load_checks(root: Path) -> dict:
+    """Check state is hand-edited, so a broken file is a normal accident.
+    Degrading to 'all pending' keeps the pages buildable; silently returning
+    {} would hide the mistake, so it also warns on stderr."""
     path = root / "state" / "research-checks.json"
     if not path.is_file():
         return {}
-    return as_dict(load_json(path).get("checks"))
+    try:
+        return as_dict(load_json(path).get("checks"))
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError) as exc:
+        print(f"WARN: {path} 无法解析（{exc.__class__.__name__}），"
+              "本轮按「全部待观察」渲染，请修复该文件", file=sys.stderr)
+        return {}
 
 
 def research_label(checks_all: dict, code: str) -> str:
