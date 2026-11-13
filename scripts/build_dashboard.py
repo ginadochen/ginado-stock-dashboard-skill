@@ -182,6 +182,10 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 .env-bar .stat{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2)}
 .env-bar .dot-s{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
 .env-bar .dot-s.gap{background:var(--text-3)}
+.env-bar .stat.warn{color:var(--warn);font-weight:600}
+.env-bar .stat.warn .dot-s{background:var(--warn)}
+.env-bar .stat .age{color:var(--text-3);font-weight:400}
+.env-bar .stat.warn .age{color:var(--warn);font-weight:600}
 .countdown{display:inline-block;padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600;
   background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn);margin-left:4px}
 .macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
@@ -229,6 +233,31 @@ JS = r"""
 (function(){
   var D = window.__D__ || {};
   var root = document.documentElement;
+
+  // ---- snapshot freshness (computed at view time, not build time) ----
+  Array.prototype.forEach.call(document.querySelectorAll('.env-bar [data-asof]'), function(el){
+    var raw = (el.getAttribute('data-asof') || '').trim();
+    if(!raw) return;
+    var t = Date.parse(raw.replace(/\s*[（(].*$/, '').replace(' ', 'T'));
+    if(!isFinite(t)) return;
+    var limit = Number(el.getAttribute('data-stale-after') || 24);
+    var hours = (Date.now() - t) / 3600000;
+    if(hours < 0) hours = 0;
+    var phrase;
+    if(hours < 1) phrase = '刚更新';
+    else if(hours < 24) phrase = Math.floor(hours) + ' 小时前更新';
+    else if(hours < 48) phrase = '已 ' + Math.floor(hours) + ' 小时未更新';
+    else phrase = '已 ' + Math.floor(hours / 24) + ' 天未更新';
+    var stale = hours >= limit;
+    if(el.hasAttribute('data-hide-if-fresh')){
+      el.style.display = stale ? '' : 'none';
+      el.textContent = (el.getAttribute('data-label') || '') + ' · ' + phrase;
+    }else{
+      var age = el.querySelector('.age');
+      if(age) age.textContent = ' · ' + phrase; else el.textContent = phrase;
+    }
+    if(stale) el.classList.add('warn'); else el.classList.remove('warn');
+  });
   try{
     var saved = localStorage.getItem('stock-dashboard-theme');
     if(saved) root.setAttribute('data-theme', saved);
@@ -386,8 +415,12 @@ def fmt_ts(ts):
         return "—"
 
 
-def render_env_bar(macro, news, snap_date):
-    """Always-visible strip: next release countdown + coverage summary."""
+def render_env_bar(macro, news, snap_date, show_age=True):
+    """Always-visible strip: next release countdown + coverage summary.
+
+    show_age is off in demo mode: the fixtures are dated in the past on purpose,
+    so an age chip would permanently scream "311 days stale" and mean nothing.
+    """
     out = ['<div class="env-bar">']
     cal = as_dict((macro or {}).get("calendar"))
     nxt = as_dict(cal.get("next_publish"))
@@ -412,10 +445,25 @@ def render_env_bar(macro, news, snap_date):
         gap = len(as_list(cov.get("uncovered")))
         out.append(f'<span class="stat"><i class="dot-s{" gap" if gap else ""}"></i>'
                    f'宏观 {cov.get("with_value", "—")}/{cov.get("total_cards", "—")} 已覆盖</span>')
+    # Freshness: snapshots are read from the newest directory that contains the
+    # file, so a failed fetch silently keeps showing yesterday's data. The age is
+    # computed in the browser from data-asof, not at build time, otherwise a page
+    # left open for days would keep claiming it was refreshed "1 hour ago".
+    cal_asof = str(cal.get("calendar_checked_at") or cov.get("calendar_checked_at") or "")
+    if show_age and cal_asof:
+        out.append(f'<span class="stat fresh" data-label="宏观" data-asof="{esc(cal_asof)}" '
+                   f'data-stale-after="48" data-hide-if-fresh="1"></span>')
     st = as_dict((news or {}).get("stats"))
+    news_asof = str((news or {}).get("as_of") or "")
+    _age_attrs = (f' data-label="新闻" data-asof="{esc(news_asof)}" data-stale-after="24"'
+                  if show_age else "")
+    _age_html = '<span class="age"></span>' if show_age else ""
     if st:
-        out.append(f'<span class="stat"><i class="dot-s"></i>'
-                   f'新闻 A{st.get("A", 0)} · B{st.get("B", 0)} · C{st.get("C", 0)}</span>')
+        out.append(f'<span class="stat"{_age_attrs}><i class="dot-s"></i>'
+                   f'新闻 A{st.get("A", 0)} · B{st.get("B", 0)} · C{st.get("C", 0)}'
+                   f'{_age_html}</span>')
+    else:
+        out.append('<span class="stat"><i class="dot-s gap"></i>新闻未覆盖</span>')
     out.append('</div>')
     return out
 
@@ -546,6 +594,21 @@ def build(root: Path) -> str:
     }
     q = as_dict(snap["quotes"].get("quotes"))
     as_of = snap["quotes"].get("as_of", "—")
+    # Three snapshot states, never merged: a pre-open auction price is a reference
+    # quote, not a trade, and must not be labelled as a closing confirmation.
+    # Note the guard order: intraday snapshots often say "非收盘价" in as_of, so
+    # testing `"收盘" in as_of` alone would misread them as closed.
+    _a = str(as_of or "")
+    _is_preopen = ("盘前" in _a) or ("集合竞价" in _a) or ("09:20" in _a)
+    _neg_close = _is_preopen or ("非收盘" in _a) or ("盘中" in _a)
+    _is_close = (not _neg_close) and (("收盘" in _a) or ("16:00" in _a))
+    # A day-level as_of carries no state at all; guessing "盘中" would be as wrong
+    # as guessing "已收盘", so the chip just shows the timestamp in that case.
+    _has_time = ":" in _a
+    _state_txt = ("盘前 · 参考价" if _is_preopen
+                  else "已收盘" if _is_close
+                  else "盘中" if _has_time
+                  else "")
     health = load_json(P["state"] / "source-health.json")
     dedupe = load_json(P["state"] / "dedupe.json")
 
@@ -583,7 +646,8 @@ def build(root: Path) -> str:
     h.append('<div class="top"><div class="brand"><h1>持仓看板</h1>'
              f'<span class="hint mono">{esc(project)}</span></div>'
              '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">')
-    h.append(f'<div class="status-chip"><span class="dot"></span>已收盘 · {esc(as_of)}</div>')
+    _chip_txt = f'{_state_txt} · {esc(as_of)}' if _state_txt else esc(as_of)
+    h.append(f'<div class="status-chip"><span class="dot"></span>{_chip_txt}</div>')
     hs = as_dict(health.get("sources"))
     cal = as_dict(hs.get("calibration"))
     cal_status = str(cal.get("status", "unknown"))
@@ -602,7 +666,7 @@ def build(root: Path) -> str:
 
     # ---------- macro env bar (optional) ----------
     if macro_snap or news_snap:
-        h.extend(render_env_bar(macro_snap, news_snap, snap_date))
+        h.extend(render_env_bar(macro_snap, news_snap, snap_date, show_age=not is_demo))
 
     # ---------- hero ----------
     h.append('<section class="card hero">')

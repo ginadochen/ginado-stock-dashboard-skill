@@ -132,6 +132,7 @@ scripts/
   build_dashboard.py   读本地快照，生成首页
   build_stock_pages.py 生成每只股票的财报详情页
   check_sources.py     探测数据源是否可达，不可用就降级
+  macro_release_due.py 判断今天有没有宏观数据发布，有就只重取那几项
   record_nav.py        每日净值埋点
   privacy_check.py     隐私扫描
   layout_check.py      检查产物有没有写到不该写的地方

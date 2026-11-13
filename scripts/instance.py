@@ -205,6 +205,7 @@ def demo_values(root: Path) -> dict:
         "SAFETY_FACTOR": DEMO_ACCOUNT["safety_factor"],
         "BASE_MARGIN": DEMO_ACCOUNT["base_margin"],
         "CHECK_HOURS": "[10, 11, 14, 15, 16]",
+        "PREOPEN_HOUR": "\"09:20\"",
         "NEWS_HOURS": "[10, 14]",
         "REPORT_CHECK": "09:30",
         "A_CALENDAR": "hs",

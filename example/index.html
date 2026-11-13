@@ -160,6 +160,10 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 .env-bar .stat{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2)}
 .env-bar .dot-s{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
 .env-bar .dot-s.gap{background:var(--text-3)}
+.env-bar .stat.warn{color:var(--warn);font-weight:600}
+.env-bar .stat.warn .dot-s{background:var(--warn)}
+.env-bar .stat .age{color:var(--text-3);font-weight:400}
+.env-bar .stat.warn .age{color:var(--warn);font-weight:600}
 .countdown{display:inline-block;padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600;
   background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn);margin-left:4px}
 .macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
@@ -203,7 +207,7 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 @media(max-width:640px){.macro-grid{grid-template-columns:1fr}}
 </style></head><body><div class="wrap">
 <div class="top"><div class="brand"><h1>持仓看板</h1><span class="hint mono">Stock Dashboard Demo</span></div><div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
-<div class="status-chip"><span class="dot"></span>已收盘 · 2026-01-05</div>
+<div class="status-chip"><span class="dot"></span>已收盘 · 2026-01-05 收盘</div>
 <div class="status-chip"><span class="dot warn"></span>主源正常 · 校准源降级</div>
 <button class="btn" id="theme-toggle" type="button">☀ 浅色 / 深色</button></div></div>
 <div class="demo-banner"><span class="tag">DEMO</span><div><b>演示数据</b>　本页所有价格、财报、持仓金额与成本均为<b>完全虚构</b>的示例值，与任何真实证券、账户或行情无关。标的仅借用公开证券代码作为标识。<div class="hint" style="margin-top:4px">跳过录入步骤时自动生成；切换到 live 模式会强制清空演示数据并要求二次确认。</div></div></div>
@@ -471,13 +475,13 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 </section></div>
 <section class="card"><div class="card-head"><h2>口径与方法</h2><span class="hint">渐进式披露，按需展开</span></div>
 <details><summary>可接受价格带的算法</summary><div class="detail-body">估值锚 × 安全边际折算价格带，再用 52 周高低收窄；同卡标注估值偏贵程度。公式：d = max(0, (anchor_percentile - 50) / 100) * safety_factor + base_margin。每个区间带安全边际、触发确认条件、失效条件三件套；按行业选锚（红利看股息率分位、周期股看 PB 不用 PE、成长股看 PE/PEG），未盈利或次新标的不给区间。<b>到价不等于买点</b>。</div></details>
-<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-12T10:27:55+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
+<details><summary>数据源健康与自动降级</summary><div class="detail-body">自检时间：2026-11-13T10:17:17+08:00；校准源状态：<b>unknown</b>。取数前自检；不可用时跳过该源全部调用、不重试、不请求重连；恢复后自动补取真实分位、把参考级升回 standard 并重算区间。<b>禁止用 K 线价格分位冒充 PE/PB 历史分位</b>。</div></details>
 <details><summary>三重币种与双源分歧</summary><div class="detail-body">财报记账本位币、股价交易币种、账户展示币种三者分离；跨市场只比比率与增速，不比绝对金额；A/H 按自然年季度对齐并标注周期差。双源冲突时两个值同时保留并标 conflict，禁止静默取一。汇率 HKDCNY = 0.85（demo-fixture (fictional)）。</div></details>
 <details><summary>未取到的数据</summary><div class="detail-body">10Y PE/PB percentile：hk00005、hk01299。原因：demo: 模拟校准源不可用。处理：保持 confidence: reference，禁止用价格分位冒充估值分位。一致预期若机构数为 0，标「平台测算值，非一手机构一致预期，需核实原文」。缺口标「未覆盖」不代表该指标为零或中性。</div></details>
 <details><summary>图表与页面规范</summary><div class="detail-body">分组柱状图 + 真实金额纵轴 + 0 线；柱端数值常显（按量级自适应精度、防重叠避让）；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28；正值标柱顶、亏损标柱底。所有网页单文件自包含，不引用外链 CSS/JS。</div></details>
 </section>
 <div class="foot">
-<div class="src">数据来源：demo-fixture（2026-01-05）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-12T10:27:55+08:00。</div>
+<div class="src">数据来源：demo-fixture（2026-01-05 收盘）；估值分位：demo-fixture；财报：demo-fixture；区间：config/buy-bands.yaml。构建时间：2026-11-13T10:17:18+08:00。</div>
 <div>本页面全部为<b>虚构演示数据</b>，仅用于展示样式与交互，不代表任何真实行情或持仓。</div>
 <div style="margin-top:8px">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</div>
 </div></div>
@@ -486,6 +490,31 @@ summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
 (function(){
   var D = window.__D__ || {};
   var root = document.documentElement;
+
+  // ---- snapshot freshness (computed at view time, not build time) ----
+  Array.prototype.forEach.call(document.querySelectorAll('.env-bar [data-asof]'), function(el){
+    var raw = (el.getAttribute('data-asof') || '').trim();
+    if(!raw) return;
+    var t = Date.parse(raw.replace(/\s*[（(].*$/, '').replace(' ', 'T'));
+    if(!isFinite(t)) return;
+    var limit = Number(el.getAttribute('data-stale-after') || 24);
+    var hours = (Date.now() - t) / 3600000;
+    if(hours < 0) hours = 0;
+    var phrase;
+    if(hours < 1) phrase = '刚更新';
+    else if(hours < 24) phrase = Math.floor(hours) + ' 小时前更新';
+    else if(hours < 48) phrase = '已 ' + Math.floor(hours) + ' 小时未更新';
+    else phrase = '已 ' + Math.floor(hours / 24) + ' 天未更新';
+    var stale = hours >= limit;
+    if(el.hasAttribute('data-hide-if-fresh')){
+      el.style.display = stale ? '' : 'none';
+      el.textContent = (el.getAttribute('data-label') || '') + ' · ' + phrase;
+    }else{
+      var age = el.querySelector('.age');
+      if(age) age.textContent = ' · ' + phrase; else el.textContent = phrase;
+    }
+    if(stale) el.classList.add('warn'); else el.classList.remove('warn');
+  });
   try{
     var saved = localStorage.getItem('stock-dashboard-theme');
     if(saved) root.setAttribute('data-theme', saved);

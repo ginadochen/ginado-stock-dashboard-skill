@@ -30,6 +30,12 @@
 
 - `conflict_policy` 固定 `keep_both_and_flag`。双源分歧时**两个值都保留**在 `conflicts`，看板标「双源分歧」，禁止静默取一。
 - 亏损股 PE 为负属正常，不要取绝对值。
+- **`as_of` 必须写清这是哪一档快照**，三种状态不能混：收盘档（含「收盘」/`16:00`）、
+  盘中档（含「盘中」，可带「非收盘价」）、盘前档（含「盘前」或「集合竞价」）。
+  看板靠它决定标「收盘确认 / 待收盘确认 / 盘前参考价」。只写「今天」会让下游没法判断，
+  而 `as_of` 里但凡出现「非收盘价」这类否定式，就不能再按「含收盘两字」判成收盘档。
+- 盘前档额外带 `price_type`：`preopen_auction`（集合竞价参考价）或 `prev_close`
+  （接口没给竞价价、只给了昨收）。后者必须再写 `status_note`，**不得把昨收当竞价价**。
 
 ### `valuation.json`
 
@@ -110,6 +116,11 @@
       "forecast": null, "former": null,
       "reason": null }                // status=uncovered 时必填
   ],
+  "forced_refresh": {                 // 仅公布日强制重取那轮出现
+    "checked_at": "2026-03-11 09:32",
+    "keys": ["cn_cpi"],
+    "events": ["统计局公布居民消费价格指数月度报告。"]
+  },
   "calendar": {
     "next_publish": { "region": "...", "event": "...", "date": "...", "time": "...", "matched": "..." },
     "decision_events": [ { "region": "...", "date": "...", "event": "...", "kind": "decision" } ],
@@ -125,6 +136,12 @@
 
 - `period` 与 `published` **必须分开存**。「11 月看到 9 月的数」是常态，只写一个 `as_of` 会让人误以为是当期值。
 - `status: uncovered` 时 `value` 置 null、`reason` 必填；**禁止用旧值或推算值填充**。
+- 指标默认只在周一全量重取。若 `scripts/macro_release_due.py` 判定当天或前一天有
+  白名单发布（`config/macro.yaml` 的 `release_refresh`），要**只重取命中项**并写
+  `forced_refresh`，同时在 `coverage` 的说明里注明本轮是强制重取——
+  不要沿用「周二至周五不重复拉指标」的旧文案，那会让读者以为这轮没取数。
+- 被强制重取的那几项要加 `refreshed_at` 与 `forced_refresh_reason`；
+  重取失败的项保留原值并加 `status_note`，不填 0、不推算。
 - 中美口径不同（当期值+同比 vs 实际/预期/前值），`coverage.cn_us_note` 里必须写明「不可直接比较」；页面只并排看方向。
 - `next_publish` 为 null 是合法状态：日历里确实可能没有白名单事件。**不允许按历史规律补一个日期**。
 

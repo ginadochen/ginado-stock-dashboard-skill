@@ -3,6 +3,9 @@ as_of: {{AS_OF}}
 trigger_mode: single-hour-rules
 schedule_note: 只在开盘时段跑；多条单整点规则，禁用 HOURLY 全天轮询
 check_hours: {{CHECK_HOURS}}
+preopen_hour: {{PREOPEN_HOUR}}
+preopen_hour_note: 盘前集合竞价检查，可选。此刻没有连续竞价成交，取到的是参考价不是成交价；
+  用它做提示可以，但不能当买点，也不能占用当天的档位确认名额（见 references/pitfalls.md 第 35 条）
 news_hours: {{NEWS_HOURS}}
 news_hours_note: 行业新闻只在这几个整点抓，其余整点跳过；不新增任务，挂进已有整点里
 report_check: {{REPORT_CHECK}}
