@@ -71,3 +71,6 @@ python scripts/privacy_check.py --root . --strict --codes CODE1,CODE2,CODE3
 - 全局 git 身份（含真实姓名与个人邮箱）未被改动；本仓库使用**仓库级**署名覆盖。
 - **CI 未启用**：发布凭据缺少 `workflow` scope，而 GitHub 对 `.github/workflows/` 目录下**任何**文件（含 `.example` 后缀）都要求该 scope。CI 模板以 `docs/verify.yml.example` 保留，启用方式见 README。
 - 独立 clone 复扫（第 13 项）在发布后立即执行：全新目录 clone → `privacy_check --strict` 0 命中 → demo 实例化 → 生成 7 个页面 → 布局检查通过。
+- **2026-11-13 v0.5.0 变更复扫**：新增 `scripts/report_style.py`、`references/remote-access.md`，修改 `SKILL.md`、`CHANGELOG.md`、`references/pitfalls.md`。`privacy_check.py --root . --strict` 0 命中。新增内容只含通用占位（`stock.example.com`、`localhost`），不含真实域名、账号 ID、Access 应用 ID、邮箱或密码。
+- 同次修正 `ipv4` 规则：放行 `127.0.0.1` 与 `0.0.0.0`。这两个是回环/通配地址，不构成隐私泄露；原规则会把任何讲「源站回源到本机端口」的文档误判为违规，属于假阳性。其余内网与公网 IPv4 仍然命中。
+- 演示验证在 `.sandbox/` 内完成（demo 实例 + 虚构报告），验证后已删除，未进入仓库。

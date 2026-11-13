@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here. Dates use `YYYY-MM-DD`.
 
+## [0.5.0] - 2026-11-13
+
+一次性报告不再自带一套皮肤。看板和研报现在共用同一套色板与主题状态。
+
+### 新增
+
+- **`scripts/report_style.py`**：给 `reports/` 下的一次性网页注入看板视觉系统。做法不是替换报告模板，而是在原文档上叠一层：把报告页常见的两套变量名（`--paper/--ink/--secondary/--line/--brand` 与 `--bg/--panel/--text/--border/--accent`）都映射到看板色板，修正卡片、按钮、目录浮层里硬编码的浅色底，插入与看板相同的主题按钮并共用 `stock-dashboard-theme` 这个 localStorage 键，深色下给内联 SVG 加白色底板。幂等，重复运行只重建注入段；`--dry-run` 可先看会改哪些文件。
+- **`references/remote-access.md`**：用户提出「想在手机上/公网上看」时的边界文档。讲三种形态的取舍（本机文件 / 隧道回源 / 上传托管）、门禁为什么要放两层、报告目录要单独挂载、进程必须常驻，以及一张按状态码定位的排查表。**只给思路不给脚本**——这一步和用户自己的域名、账号强绑定，照抄别人配置大概率卡在「为什么我没有这个选项」。
+
+### 变更
+
+- `SKILL.md` 第 4 步补「一次性网页要跑一次 `report_style.py`」，参考文件表加入 `remote-access.md`。
+- `SKILL.md` 的 description 由「不发布公网」改为「不代为发布公网」——文档可以讲怎么做，但 skill 本身不代为部署。
+- `references/pitfalls.md` 新增「一次性网页」一节（第 41、42 条）：报告自带皮肤的代价与两套变量名的坑；SVG 的 `fill`/`stroke` 是 presentation attribute，`var()` 在其中不生效，只改 CSS 变量救不了图表。
+
 ## [0.4.0] - 2026-11-13
 
 把「我当时的判断」变成可对账的资产。这是第三个可选模块，与宏观、新闻同级。

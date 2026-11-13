@@ -41,7 +41,7 @@ PATTERNS = [
     ("private-key", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("email", re.compile(r"\b[\w.+-]+@(?!users\.noreply\.github\.com|example\.com|workbuddy\.cn)[\w-]+\.[\w.]{2,}\b")),
     ("mainland-mobile", re.compile(r"(?<!\d)1[3-9]\d{9}(?!\d)")),
-    ("ipv4", re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")),
+    ("ipv4", re.compile(r"(?<![\d.])(?!(?:127\.0\.0\.1|0\.0\.0\.0)(?![\d.]))(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")),
     ("share-count", re.compile(r"(?:shares|持股|股数)\s*[:：]\s*\d{3,}(?!\.)")),
     ("cost-price", re.compile(r"(?:cost|成本价)\s*[:：]\s*\d{2,}\.\d{4}")),
     ("real-name-in-header", re.compile(r"(?:user\.name|committer|author)\s*[:=]\s*[\u4e00-\u9fa5]{2,4}")),

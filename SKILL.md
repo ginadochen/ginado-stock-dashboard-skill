@@ -1,6 +1,6 @@
 ---
 name: stock-dashboard
-description: 创建并维护个人股票持仓看板：录入自选标的与持仓、生成本地 HTML 看板与个股财报详情页、可选接入中美宏观环境与细分行业新闻、把深度研究报告挂成可对账的命题清单、配置财报监控与开盘时段价格检查。当用户要求「做股票看板」「持仓看板」「盯盘面板」「财报详情页」「宏观环境面板」「行业新闻」「深度研究对账」「待验证命题」「到价提醒」时使用。不提供投资建议、不执行交易、不发布公网。
+description: 创建并维护个人股票持仓看板：录入自选标的与持仓、生成本地 HTML 看板与个股财报详情页、可选接入中美宏观环境与细分行业新闻、把深度研究报告挂成可对账的命题清单、配置财报监控与开盘时段价格检查。当用户要求「做股票看板」「持仓看板」「盯盘面板」「财报详情页」「宏观环境面板」「行业新闻」「深度研究对账」「待验证命题」「到价提醒」时使用。不提供投资建议、不执行交易、不代为发布公网。
 license: Apache-2.0
 agent_created: true
 allowed-tools:
@@ -83,6 +83,11 @@ python scripts/build_stock_pages.py --root <实例目录>
 - 数字用等宽字体、右对齐、正收益显式带 `+`；**红涨绿跌**（中国习惯）；颜色必须配箭头或符号。
 - 图表：分组柱状图 + 真实金额纵轴 + 柱端数值**常显**（悬停只作精度补充）；横轴每个报告期一个刻度，两级坐标（月份 + 年份分组带），首尾留白 ≥ 28。
 - 三层信息漏斗：1 秒结论 → 2 秒结构 → 按需下钻；口径与方法收进折叠面板。
+- **一次性网页要跑一次 `scripts/report_style.py`**：`reports/YYYY-MM/*.html` 这类报告是另行生成的，很容易自带一套浅色阅读皮肤，和深色看板并排像两个产品。构建完报告后执行
+  ```bash
+  python scripts/report_style.py "reports/YYYY-MM/*.html"
+  ```
+  它把看板色板、主题切换、`localStorage` 主题键注入报告，报告只保留排版结构（阅读宽度、目录、锚点），不保留自己的配色。深色下会给内联 SVG 加白色底板——图表坐标轴文字多是硬编码深色，只改 CSS 变量救不了（`var()` 在 SVG presentation attribute 里不生效）。脚本幂等，重复运行只重建注入段。
 
 ### 可选模块：宏观环境 / 行业新闻 / 深度研究对账
 
@@ -160,4 +165,5 @@ python scripts/build_dashboard.py    --root <实例目录> --self-test
 | `references/scheduling.md` | 配置定时任务时 |
 | `references/automation-prompts.md` | 生成自动化 prompt 时 |
 | `references/disclaimer.md` | 任何含价位/仓位/结论的输出 |
+| `references/remote-access.md` | 用户提出「想在手机上/公网上看」时，先读代价与边界 |
 | `docs/PRIVACY-AUDIT.md` | 发布前隐私验收 |
